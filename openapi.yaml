@@ -1,0 +1,335 @@
+openapi: 3.0.3
+info:
+  title: NFT Fund API
+  version: v1
+paths:
+  /accounts:
+    x-controller: accounts
+    post:
+      x-operation: createAccount
+      tags:
+        - Accounts
+      summary: Create an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+                - isManager
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                isManager:
+                  type: boolean
+            example:
+              username: username
+              password: password-here
+              isManger: false
+      responses:
+        201:
+          description: Account created.
+        400:
+          description: Invalid request.
+        409:
+          description: Account already exists.
+  /accounts/{accountId}:
+    parameters:
+      - $ref: '#/components/parameters/PathAccountId'
+    x-controller: accounts
+    delete:
+      x-operation: deleteAccount
+      tags:
+        - Accounts
+      summary: Delete an account
+      responses:
+        204:
+          description: Account deleted.
+        401:
+          description: Not authenticated.
+        403:
+          description: Access denied.
+  /accounts/{accountId}/login:
+    parameters:
+      - $ref: '#/components/parameters/PathAccountId'
+    x-controller: accounts
+    put:
+      x-operator: loginAccount
+      tags:
+        - Accounts
+      summary: Log in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - password
+              properties:
+                password:
+                  type: string
+                  format: password
+            example:
+              password: password-here
+      responses:
+        200:
+          description: Authenticated.
+        400:
+          description: Invalid request.
+        403:
+          description: Access denied.
+  /accounts/{accountId}/logout:
+    parameters:
+      - $ref: '#/components/parameters/PathAccountId'
+    x-conroller: accounts
+    put:
+      x-operation: logoutAccount
+      tags:
+        - Accounts
+      summary: Log out
+      responses:
+        200:
+          description: Logged out.
+        403:
+          description: Access denied.
+  /funds:
+    x-controller: funds
+    post:
+      x-operation: addFund
+      tags:
+        - Funds
+      summary: Add a fund
+      requestBody:
+        $ref: '#/components/requestBodies/SetFund'
+      responses:
+        201:
+          description: Fund created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fund'
+        400:
+          description: Invalid request.
+        401:
+          description: Not authenticated.
+  /funds/{fundId}:
+    parameters:
+      - $ref: '#/components/parameters/PathFundId'
+    x-controller: funds
+    get:
+      x-operation: getFund
+      tags:
+        - Funds
+      summary: Get a fund
+      parameters:
+        - name: title
+          in: query
+          schema:
+            type: string
+        - name: description
+          in: query
+          schema:
+            type: string
+        - name: ownerId
+          in: query
+          schema:
+            type: integer
+        - name: members
+          in: query
+          schema:
+            type: array
+            items:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                isManager:
+                  type: boolean
+          example:
+            - username: username
+              password: password-here
+              isManager: false
+        - name: capital
+          in: query
+          schema:
+            type: object
+            properties:
+              ETH:
+                type: integer
+              SOL:
+                type: integer
+              AVAX:
+                type: integer
+              XRP:
+                type: integer
+          example:
+            ETH: 125
+            SOL: 215
+            AVAX: 256
+            XRP: 1547
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fund'
+        400:
+          description: Invalid request.
+        401:
+          description: Not authenticated.
+    put:
+      x-operation: updateFund
+      tags:
+        - Funds
+      summary: Update a fund
+      requestBody:
+        $ref: '#/components/requestBodies/SetFund'
+      responses:
+        200:
+          description: Fund updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fund'
+        400:
+          description: Invalid request.
+        401:
+          description: Not authenticated.
+        403:
+          description: Access denied.
+        404:
+          description: Not found.
+    delete:
+      x-operation: deleteFund
+      tags:
+        - Funds
+      summary: Delete a fund
+      responses:
+        204:
+          description: Fund deleted.
+        401:
+          description: Not authenticated.
+        403:
+          description: Access denied.
+  /funds/{fundId}/accounts/{accountId/invite:
+    parameters:
+      - $ref: '#/components/parameters/PathFundId'
+      - $ref: '#/components/parameters/PathAccountId'
+    x-controller: funds
+    put:
+      x-operation: addMember
+      tags:
+        - Funds
+      summary: Add a member to a fund
+      requestBody:
+        $ref: '#/components/requestBodies/SetFund'
+      responses:
+        200:
+          description: Member added.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fund'
+        400:
+          description: Invalid request.
+        401:
+          description: Not authenticated.
+        403:
+          description: Access denied.
+        404:
+          description: Not found.
+  /funds/{fundId}/accounts/{accountId}:
+    parameters:
+      - $ref: '#/components/parameters/PathFundId'
+      - $ref: '#/components/parameters/PathAccountId'
+    x-controller: funds
+    put:
+      x-operation: removeMember
+      tags:
+        - Funds
+      summary: Remove a member from a fund
+      requestBody:
+        $ref: '#/components/requestBodies/SetFund'
+      responses:
+        200:
+          description: Member removed.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Fund'
+        400:
+          description: Invalid request.
+        401:
+          description: Not authenticated.
+        403:
+          description: Access denied.
+        404:
+          description: Not found.
+components:
+  parameters:
+    PathAccountId:
+      name: accountId
+      in: path
+      required: true
+      schema:
+        type: integer
+    PathFundId:
+      name: fundId
+      in: path
+      required: true
+      schema:
+        type: integer
+  requestBodies:
+    SetFund:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Fund'
+  schemas:
+    Fund:
+      type: object
+      properties:
+        FundId:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+        description:
+          type: string
+        ownerId:
+          type: integer
+        members:
+          type: array
+          items:
+            type: object
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+                format: password
+              isManager:
+                type: boolean
+        capital:
+          type: object
+          properties:
+            ETH:
+              type: integer
+            SOL:
+              type: integer
+            AVAX:
+              type: integer
+            XRP:
+              type: integer
