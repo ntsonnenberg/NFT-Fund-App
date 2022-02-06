@@ -1,4 +1,4 @@
-const express = require('express');
+/*const express = require('express');
 
 const app = express();
 
@@ -29,9 +29,17 @@ app.post('/', (req, res) => {
 
 app.listen(3001, () => {
     console.log('Listening on port 3001');
-});
+});*/
 
-// CREATE SERVER.JS FILE FROM CLASS ON MONDAY
+const server = require('./api').server;
+
+async function run () {
+    const app = await server();
+
+    app.listen(3001, () => {
+        console.log('Server is running on port 3001');
+    });
+}
 
 // then delete the function in server.js but still include everything
 // within the function to run
