@@ -2,6 +2,7 @@ openapi: 3.0.3
 info:
   title: NFT Fund API
   version: v1
+x-mock-implemented: true
 paths:
   /accounts:
     x-controller: accounts

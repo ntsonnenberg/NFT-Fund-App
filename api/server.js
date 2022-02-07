@@ -4,47 +4,88 @@ const express = require('express');
 const path = require('path');
 const { Http2ServerRequest } = require('http2');
 
-exports.server = async function () {
-    const app = express();
+const app = express();
 
-    const openapiPath = path.resolve(__dirname, '../openapi.yaml');
-    const enforcer = await Enforcer(openapiPath, { hideWarnings: true });
-    const enforcerMiddleware = EnforcerMiddleware(enforcer);
+const openapiPath = path.resolve(__dirname, '../openapi.yaml');
+const enforcer = Enforcer(openapiPath, { hideWarnings: true });
+const enforcerMiddleware = EnforcerMiddleware(enforcer);
 
-    app.use(express.json())
+app.use(express.json());
+app.use(express.text());
 
-    app.use((req, res, next) => {
-        console.log(req.method + ' ' + req.path, req.headers, req.body);
-        next();
-    });
+app.use((req, res, next) => {
+    console.log(req.method + ' ' + req.path, req.headers, req.body);
+    next();
+});
 
-    app.use(enforcerMiddleware.init());
+app.use(enforcerMiddleware.init({ baseUrl: '/api' }));
 
-    // Catch errors.
-    enforcerMiddleware.on('error', err => {
-        console.error(err);
-        process.exit(1);
-    });
+app.post('/accounts', (req, res) => {
+    if (req.enforcer.body) {
+        res.enforcer.status(201).send('Account created');
+    } else {
+        res.enforcer.status(400).send('Invalid request.');
+    }
+});
 
-    app.use(enforcerMiddleware.route({
-        // The "users" is mapped via "x-controller" value.
-        accounts: {
-            async login (req, res) {
-                const user = function () {
-                    return {
-                        id: 1,
-                        username: 'ntsonnenberg',
-                        password: 'password-here',
-                        isManager: false
-                    }
-                }
+app.delete('/account/:accountId', (req, res) => {
+    let accoundId = req.enforcer.params;
 
-                res.enforcer.send(user);
+    if (accoundId) {
+        res.enforcer.status(204).send('Account deleted.');
+    } else {
+        res.enforcer.status(401).send('Not authenticated.');
+    }
+});
+
+app.put('/account/:accountId/login', (req, res) => {
+    
+});
+
+app.put('/account/:accountId/logout', (req, res) => {
+
+});
+
+app.post('/funds/', (req, res) => {
+
+});
+
+app.get('/funds/:fundId', (req, res) => {
+
+});
+
+// Catch errors.
+enforcerMiddleware.on('error', err => {
+    console.error(err);
+    process.exit(1);
+});
+
+/*
+app.use(enforcerMiddleware.route({
+    // 
+    accounts: {
+        async createAccount (req, res) {
+            const user = req.body;
+            console.log('inside create account function')
+
+            if (user) {
+                res.enforcer.status(201).send('Account created.');
+            } else {
+                res.enforcer.status(400).send('Invalid request.');
+            }
+        },
+        async deleteAccount (req, res) {
+            const accoundId = req.enforcer.params;
+
+            if (accoundId == "1") {
+                res.enforcer.status(204).send('Account deleted.');
+            } else {
+                res.enforcer.status(401).send('Not authenticated.');
             }
         }
-    }));
+    }
+}));*/
 
-    app.use(enforcerMiddleware.mock());
+app.use(enforcerMiddleware.mock());
 
-    return app;
-}
+module.exports = app;
