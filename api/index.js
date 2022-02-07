@@ -31,7 +31,7 @@ app.listen(3001, () => {
     console.log('Listening on port 3001');
 });*/
 
-const server = require('./api').server;
+const server = require('./server').server;
 
 async function run () {
     const app = await server();
@@ -40,6 +40,8 @@ async function run () {
         console.log('Server is running on port 3001');
     });
 }
+
+run().catch(console.error);
 
 // then delete the function in server.js but still include everything
 // within the function to run
