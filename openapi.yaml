@@ -2,7 +2,6 @@ openapi: 3.0.3
 info:
   title: NFT Fund API
   version: v1
-x-mock-implemented: true
 paths:
   /accounts:
     x-controller: accounts
@@ -142,24 +141,12 @@ paths:
           in: query
           schema:
             type: integer
-        - name: members
+        - name: memberIds
           in: query
           schema:
             type: array
             items:
-              type: object
-              properties:
-                username:
-                  type: string
-                password:
-                  type: string
-                  format: password
-                isManager:
-                  type: boolean
-          example:
-            - username: username
-              password: password-here
-              isManager: false
+              type: integer
         - name: capital
           in: query
           schema:
@@ -311,18 +298,10 @@ components:
           type: string
         ownerId:
           type: integer
-        members:
+        memberIds:
           type: array
           items:
-            type: object
-            properties:
-              username:
-                type: string
-              password:
-                type: string
-                format: password
-              isManager:
-                type: boolean
+            type: integer
         capital:
           type: object
           properties:

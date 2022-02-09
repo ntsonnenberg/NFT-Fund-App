@@ -20,6 +20,7 @@ app.use((req, res, next) => {
 
 app.use(enforcerMiddleware.init({ baseUrl: '/api' }));
 
+/*
 app.post('/accounts', (req, res) => {
     if (req.enforcer.body) {
         res.enforcer.status(201).send('Account created');
@@ -39,19 +40,41 @@ app.delete('/account/:accountId', (req, res) => {
 });
 
 app.put('/account/:accountId/login', (req, res) => {
-    
+    let accoundId = req.enforcer.params;
+
+    if (accoundId) {
+        res.enforcer.status(204).send('Account deleted.');
+    } else {
+        res.enforcer.status(401).send('Not authenticated.');
+    }
 });
 
 app.put('/account/:accountId/logout', (req, res) => {
+    let accountId = req.enforcer.params;
 
+    if (accountId) {
+        res.enforcer.status(200).send('Logged out.');
+    } else {
+        res.enforcer.status(403).send('Access denied.');
+    }
 });
 
-app.post('/funds/', (req, res) => {
-
+app.post('/funds', (req, res) => {
+    if (req.body) {
+        res.enforcer.status(201).send(req.body);
+    } else {
+        res.enforcer.status(400).send('Invalid request.');
+    }
 });
 
 app.get('/funds/:fundId', (req, res) => {
+    let fundId = req.enforcer.params;
 
+    if (fundId && req.body) {
+        res.enforcer.status(200).send(req.body);
+    } else {
+        res.enforcer.status(400).send('Invalid request.');
+    }
 });
 
 // Catch errors.
@@ -60,7 +83,7 @@ enforcerMiddleware.on('error', err => {
     process.exit(1);
 });
 
-/*
+
 app.use(enforcerMiddleware.route({
     // 
     accounts: {
