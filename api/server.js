@@ -1,12 +1,12 @@
-const Enforcer = require('openapi-enforcer');
-const EnforcerMiddleware = require('openapi-enforcer-middleware');
-const express = require('express');
-const path = require('path');
-const { Http2ServerRequest } = require('http2');
+const Enforcer = require("openapi-enforcer");
+const EnforcerMiddleware = require("openapi-enforcer-middleware");
+const express = require("express");
+const path = require("path");
+const { Http2ServerRequest } = require("http2");
 
 const app = express();
 
-const openapiPath = path.resolve(__dirname, '../openapi.yaml');
+const openapiPath = path.resolve(__dirname, "../openapi.yaml");
 const enforcer = Enforcer(openapiPath, { hideWarnings: true });
 const enforcerMiddleware = EnforcerMiddleware(enforcer);
 
@@ -14,11 +14,11 @@ app.use(express.json());
 app.use(express.text());
 
 app.use((req, res, next) => {
-    console.log(req.method + ' ' + req.path, req.headers, req.body);
-    next();
+  console.log(req.method + " " + req.path, req.headers, req.body);
+  next();
 });
 
-app.use(enforcerMiddleware.init({ baseUrl: '/api' }));
+app.use(enforcerMiddleware.init({ baseUrl: "/api" }));
 
 /*
 app.post('/accounts', (req, res) => {
