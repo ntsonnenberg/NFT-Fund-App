@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+
+  db:
+    container_name: pg_container
+    build:
+      context: ./docker/db
+    restart: always
+    ports:
+      - "3002:5432"
+  
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "5050:80"
