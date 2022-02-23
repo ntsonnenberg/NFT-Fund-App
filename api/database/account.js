@@ -2,12 +2,15 @@ const bcrypt = require("bcryptjs");
 const uuid = require("uuid").v4;
 
 exports.createAccount = async function (client, username, password, isManager) {
-  const accountId = uuid();
+  const accountId = Number(
+    uuid().toString().replace(/-/g, "").replace(/\D/g, "").substring(0, 7)
+  );
+
   const salt = await bcrypt.genSalt(10);
 
   const { rowCount } = await client.query({
     name: "create-account",
-    text: "INSERT INTO accounts (account_id, username, password, isManager) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
+    text: "INSERT INTO accounts (account_id, username, password, is_manager) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
     values: [accountId, username, await bcrypt.hash(password, salt), isManager],
   });
 
@@ -26,6 +29,7 @@ exports.getAccount = async function (client, accountId) {
 
 exports.updateAccount = async function (client, accountId, data) {
   const { username, password, isManager } = data;
+
   const values = [];
   const sets = [];
 
@@ -41,7 +45,7 @@ exports.updateAccount = async function (client, accountId, data) {
 
   if (isManager !== undefined) {
     values.push(isManager);
-    sets.push("isManager=$" + values.length);
+    sets.push("is_manager=$" + values.length);
   }
 
   if (values.length === 0) {
@@ -50,7 +54,7 @@ exports.updateAccount = async function (client, accountId, data) {
 
   values.push(accountId);
 
-  const { rows } = client.query({
+  const { rows } = await client.query({
     name: "update-account",
     text:
       "UPDATE accounts SET  " +

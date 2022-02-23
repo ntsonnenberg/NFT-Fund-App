@@ -41,7 +41,7 @@ paths:
           description: Account already exists.
   /accounts/{accountId}:
     parameters:
-      - $ref: '#/components/parameters/PathAccountId'
+      - $ref: "#/components/parameters/PathAccountId"
     x-controller: accounts
     delete:
       x-operation: deleteAccount
@@ -55,9 +55,39 @@ paths:
           description: Not authenticated.
         403:
           description: Access denied.
+    put:
+      x-operation: updateAccount
+      tags:
+        - Accounts
+      summary: Update an account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                  format: password
+                isManager:
+                  type: boolean
+            example:
+              username: username
+              password: password-here
+              isManager: false
+      responses:
+        200:
+          description: Account updated.
+        401:
+          description: Not authenticated.
+        403:
+          description: Access denied
   /accounts/{accountId}/login:
     parameters:
-      - $ref: '#/components/parameters/PathAccountId'
+      - $ref: "#/components/parameters/PathAccountId"
     x-controller: accounts
     put:
       x-operator: loginAccount
@@ -87,7 +117,7 @@ paths:
           description: Access denied.
   /accounts/{accountId}/logout:
     parameters:
-      - $ref: '#/components/parameters/PathAccountId'
+      - $ref: "#/components/parameters/PathAccountId"
     x-conroller: accounts
     put:
       x-operation: logoutAccount
@@ -107,21 +137,21 @@ paths:
         - Funds
       summary: Add a fund
       requestBody:
-        $ref: '#/components/requestBodies/SetFund'
+        $ref: "#/components/requestBodies/SetFund"
       responses:
         201:
           description: Fund created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fund'
+                $ref: "#/components/schemas/Fund"
         400:
           description: Invalid request.
         401:
           description: Not authenticated.
   /funds/{fundId}:
     parameters:
-      - $ref: '#/components/parameters/PathFundId'
+      - $ref: "#/components/parameters/PathFundId"
     x-controller: funds
     get:
       x-operation: getFund
@@ -171,7 +201,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fund'
+                $ref: "#/components/schemas/Fund"
         400:
           description: Invalid request.
         401:
@@ -182,14 +212,14 @@ paths:
         - Funds
       summary: Update a fund
       requestBody:
-        $ref: '#/components/requestBodies/SetFund'
+        $ref: "#/components/requestBodies/SetFund"
       responses:
         200:
           description: Fund updated.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fund'
+                $ref: "#/components/schemas/Fund"
         400:
           description: Invalid request.
         401:
@@ -212,8 +242,8 @@ paths:
           description: Access denied.
   /funds/{fundId}/accounts/{accountId}/invite:
     parameters:
-      - $ref: '#/components/parameters/PathFundId'
-      - $ref: '#/components/parameters/PathAccountId'
+      - $ref: "#/components/parameters/PathFundId"
+      - $ref: "#/components/parameters/PathAccountId"
     x-controller: funds
     put:
       x-operation: addMember
@@ -221,14 +251,14 @@ paths:
         - Funds
       summary: Add a member to a fund
       requestBody:
-        $ref: '#/components/requestBodies/SetFund'
+        $ref: "#/components/requestBodies/SetFund"
       responses:
         200:
           description: Member added.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fund'
+                $ref: "#/components/schemas/Fund"
         400:
           description: Invalid request.
         401:
@@ -239,8 +269,8 @@ paths:
           description: Not found.
   /funds/{fundId}/accounts/{accountId}:
     parameters:
-      - $ref: '#/components/parameters/PathFundId'
-      - $ref: '#/components/parameters/PathAccountId'
+      - $ref: "#/components/parameters/PathFundId"
+      - $ref: "#/components/parameters/PathAccountId"
     x-controller: funds
     put:
       x-operation: removeMember
@@ -248,14 +278,14 @@ paths:
         - Funds
       summary: Remove a member from a fund
       requestBody:
-        $ref: '#/components/requestBodies/SetFund'
+        $ref: "#/components/requestBodies/SetFund"
       responses:
         200:
           description: Member removed.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Fund'
+                $ref: "#/components/schemas/Fund"
         400:
           description: Invalid request.
         401:
@@ -284,7 +314,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Fund'
+            $ref: "#/components/schemas/Fund"
   schemas:
     Fund:
       type: object

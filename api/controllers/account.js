@@ -4,6 +4,7 @@ module.exports = function (pool) {
   return {
     async createAccount(req, res) {
       const { username, password, isManager } = req.enforcer.body;
+
       const accountId = await accounts.createAccount(
         pool,
         username,
