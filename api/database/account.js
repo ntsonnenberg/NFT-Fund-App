@@ -39,7 +39,9 @@ exports.updateAccount = async function (client, accountId, data) {
   }
 
   if (password !== undefined) {
-    values.push(password);
+    const salt = await bcrypt.genSalt(10);
+
+    values.push(await bcrypt.hash(password, salt));
     sets.push("password=$" + values.length);
   }
 
@@ -76,4 +78,14 @@ exports.deleteAccount = async function (client, accountId) {
   });
 
   return rowCount > 0;
+};
+
+exports.getFund = async function (client, fundId) {
+  const { rows } = await client.query({
+    name: "get-fund-by-id",
+    text: "SELECT * FROM funds WHERE fund_id=$1",
+    values: [fundId],
+  });
+
+  return rows[0];
 };

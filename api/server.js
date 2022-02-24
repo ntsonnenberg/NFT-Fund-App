@@ -32,12 +32,6 @@ const enforcer = Enforcer(openapiPath, { hideWarnings: true });
 const enforcerMiddleware = EnforcerMiddleware(enforcer);
 
 app.use(express.json());
-app.use(express.text());
-
-// app.use((req, res, next) => {
-//   console.log(req.method + " " + req.path, req.headers, req.body);
-//   next();
-// });
 
 app.use(enforcerMiddleware.init({ baseUrl: "/api" }));
 
@@ -45,6 +39,28 @@ enforcerMiddleware.on("error", (err) => {
   console.log(err);
   process.exit(1);
 });
+
+// app.use((req, res, next) => {
+//   const { operation } = req.enforcer;
+
+//   if (operation.security !== undefined) {
+//     const sessionIsRequired = operation.security.find(
+//       (obj) => obj.cookieAuth !== undefined
+//     );
+
+//     if (sessionIsRequired) {
+//       const cookie = req.cookies.todoSessionId;
+
+//       if (cookie === undefined || req.user === undefined) {
+//         res.status(401).send();
+
+//         return;
+//       }
+//     }
+//   }
+
+//   next();
+// });
 
 app.use(
   enforcerMiddleware.route({

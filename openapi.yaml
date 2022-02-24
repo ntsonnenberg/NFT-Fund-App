@@ -47,6 +47,8 @@ paths:
       x-operation: deleteAccount
       tags:
         - Accounts
+      security:
+        - cookieAuth: []
       summary: Delete an account
       responses:
         204:
@@ -59,6 +61,8 @@ paths:
       x-operation: updateAccount
       tags:
         - Accounts
+      security:
+        - cookieAuth: []
       summary: Update an account
       requestBody:
         required: true
@@ -123,6 +127,8 @@ paths:
       x-operation: logoutAccount
       tags:
         - Accounts
+      security:
+        - cookieAuth: []
       summary: Log out
       responses:
         200:
@@ -135,6 +141,8 @@ paths:
       x-operation: addFund
       tags:
         - Funds
+      security:
+        - cookieAuth: []
       summary: Add a fund
       requestBody:
         $ref: "#/components/requestBodies/SetFund"
@@ -157,6 +165,8 @@ paths:
       x-operation: getFund
       tags:
         - Funds
+      security:
+        - cookieAuth: []
       summary: Get a fund
       parameters:
         - name: title
@@ -210,6 +220,8 @@ paths:
       x-operation: updateFund
       tags:
         - Funds
+      security:
+        - cookieAuth: []
       summary: Update a fund
       requestBody:
         $ref: "#/components/requestBodies/SetFund"
@@ -232,6 +244,8 @@ paths:
       x-operation: deleteFund
       tags:
         - Funds
+      security:
+        - cookieAuth: []
       summary: Delete a fund
       responses:
         204:
@@ -249,6 +263,8 @@ paths:
       x-operation: addMember
       tags:
         - Funds
+      security:
+        - cookieAuth: []
       summary: Add a member to a fund
       requestBody:
         $ref: "#/components/requestBodies/SetFund"
@@ -276,6 +292,8 @@ paths:
       x-operation: removeMember
       tags:
         - Funds
+      security:
+        - cookieAuth: []
       summary: Remove a member from a fund
       requestBody:
         $ref: "#/components/requestBodies/SetFund"
@@ -315,6 +333,11 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Fund"
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: todoSessionId
   schemas:
     Fund:
       type: object
