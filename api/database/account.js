@@ -88,7 +88,7 @@ exports.deleteAccount = async function (client, accountId) {
 async function encryptPassword(password) {
   const salt = await bcrypt.genSalt(10);
 
-  return await bycrpt.hash(password, salt);
+  return await bcrypt.hash(password, salt);
 }
 
 exports.getFund = async function (client, fundId) {

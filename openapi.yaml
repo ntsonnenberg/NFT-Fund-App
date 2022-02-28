@@ -39,9 +39,9 @@ paths:
           description: Invalid request.
         409:
           description: Account already exists.
-  /accounts/{accountId}:
+  /accounts/{username}:
     parameters:
-      - $ref: "#/components/parameters/PathAccountId"
+      - $ref: "#/components/parameters/PathUsername"
     x-controller: accounts
     delete:
       x-operation: deleteAccount
@@ -89,14 +89,12 @@ paths:
           description: Not authenticated.
         403:
           description: Access denied
-  /accounts/{accountId}/login:
-    parameters:
-      - $ref: "#/components/parameters/PathAccountId"
-    x-controller: accounts
+  /authentication/login:
+    x-controller: authentication
     put:
-      x-operator: loginAccount
+      x-operator: login
       tags:
-        - Accounts
+        - Authentication
       summary: Log in
       requestBody:
         required: true
@@ -119,14 +117,12 @@ paths:
           description: Invalid request.
         403:
           description: Access denied.
-  /accounts/{accountId}/logout:
-    parameters:
-      - $ref: "#/components/parameters/PathAccountId"
-    x-conroller: accounts
+  /authentication/logout:
+    x-controller: authentication
     put:
-      x-operation: logoutAccount
+      x-operation: logout
       tags:
-        - Accounts
+        - Authentication
       security:
         - cookieAuth: []
       summary: Log out
@@ -254,10 +250,10 @@ paths:
           description: Not authenticated.
         403:
           description: Access denied.
-  /funds/{fundId}/accounts/{accountId}/invite:
+  /funds/{fundId}/accounts/{username}/invite:
     parameters:
       - $ref: "#/components/parameters/PathFundId"
-      - $ref: "#/components/parameters/PathAccountId"
+      - $ref: "#/components/parameters/PathUsername"
     x-controller: funds
     put:
       x-operation: addMember
@@ -283,10 +279,10 @@ paths:
           description: Access denied.
         404:
           description: Not found.
-  /funds/{fundId}/accounts/{accountId}:
+  /funds/{fundId}/accounts/{username}:
     parameters:
       - $ref: "#/components/parameters/PathFundId"
-      - $ref: "#/components/parameters/PathAccountId"
+      - $ref: "#/components/parameters/PathUsername"
     x-controller: funds
     put:
       x-operation: removeMember
@@ -314,12 +310,12 @@ paths:
           description: Not found.
 components:
   parameters:
-    PathAccountId:
-      name: accountId
+    PathUsername:
+      name: username
       in: path
       required: true
       schema:
-        type: integer
+        type: string
     PathFundId:
       name: fundId
       in: path

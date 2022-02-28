@@ -1,9 +1,9 @@
 module.exports = function (passport) {
-  const authenication = passport.authenticate("local");
+  const authenticate = passport.authenticate("local");
 
   return {
     login(req, res, next) {
-      authenticate(req, res, (err) => {
+      authenticate((req, res, err) => {
         if (err) {
           return next(err);
         }

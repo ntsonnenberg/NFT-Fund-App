@@ -6,14 +6,14 @@ const express = require("express");
 const { Pool } = require("pg");
 const path = require("path");
 const Accounts = require("./controllers/account");
-const Authentication;
+const Authentication = require("./controllers/authentication");
 const Funds = require("./controllers/fund");
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const session = require("express-session");
 const DatabaseAccounts = require("./database/account");
-const ConnectPgSimple = require('connect-pg-simple')(session);
+const ConnectPgSimple = require("connect-pg-simple")(session);
 
 const pool = new Pool({
   host: process.env.DB_URL,
@@ -32,28 +32,34 @@ pool.query("SELECT NOW()", (err, res) => {
   }
 });
 
-passport.use(new LocalStrategy((username, password, done) => {
-  DatabaseAccounts.getAccountByUsername(pool, username)
-    .then(async account => {
-      if (account === undefined) {
-        done(null, false);
-      } else {
-        const match = await bycrpt.compare(password, account.password);
-
-        if (match) {
-          done(null, { id: account.account_id, username: account.username, isManager: account.is_manager})
-        } else {
-          const hash = await bycrpt.hash(password, 10);
-          const m2 = await bcrypt.compare(password, hash);
-
+passport.use(
+  new LocalStrategy((username, password, done) => {
+    DatabaseAccounts.getAccountByUsername(pool, username)
+      .then(async (account) => {
+        if (account === undefined) {
           done(null, false);
+        } else {
+          const match = await bcrypt.compare(password, account.password);
+
+          if (match) {
+            done(null, {
+              id: account.account_id,
+              username: account.username,
+              isManager: account.is_manager,
+            });
+          } else {
+            const hash = await bcrypt.hash(password, 10);
+            const m2 = await bcrypt.compare(password, hash);
+
+            done(null, false);
+          }
         }
-      }
-    })
-    .catch(err => {
-      done(err, null);
-    });
-}));
+      })
+      .catch((err) => {
+        done(err, null);
+      });
+  })
+);
 
 passport.serializeUser((user, done) => {
   done(null, JSON.stringify(user));
@@ -78,17 +84,19 @@ enforcerMiddleware.on("error", (err) => {
   process.exit(1);
 });
 
-app.use(session({
-  store: new ConnectPgSimple({
-    pool
-  }),
-  secret: 'hellohi', //process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    maxAge: 2592000000 // 30 days written in milliseconds
-  }
-}));
+app.use(
+  session({
+    store: new ConnectPgSimple({
+      pool,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 2592000000, // 30 days written in milliseconds
+    },
+  })
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
