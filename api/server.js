@@ -6,7 +6,14 @@ const express = require("express");
 const { Pool } = require("pg");
 const path = require("path");
 const Accounts = require("./controllers/account");
+const Authentication;
 const Funds = require("./controllers/fund");
+const bcrypt = require("bcryptjs");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
+const DatabaseAccounts = require("./database/account");
+const ConnectPgSimple = require('connect-pg-simple')(session);
 
 const pool = new Pool({
   host: process.env.DB_URL,
@@ -25,6 +32,37 @@ pool.query("SELECT NOW()", (err, res) => {
   }
 });
 
+passport.use(new LocalStrategy((username, password, done) => {
+  DatabaseAccounts.getAccountByUsername(pool, username)
+    .then(async account => {
+      if (account === undefined) {
+        done(null, false);
+      } else {
+        const match = await bycrpt.compare(password, account.password);
+
+        if (match) {
+          done(null, { id: account.account_id, username: account.username, isManager: account.is_manager})
+        } else {
+          const hash = await bycrpt.hash(password, 10);
+          const m2 = await bcrypt.compare(password, hash);
+
+          done(null, false);
+        }
+      }
+    })
+    .catch(err => {
+      done(err, null);
+    });
+}));
+
+passport.serializeUser((user, done) => {
+  done(null, JSON.stringify(user));
+});
+
+passport.deserializeUser((id, done) => {
+  done(null, JSON.parse(id));
+});
+
 const app = express();
 
 const openapiPath = path.resolve(__dirname, "../openapi.yaml");
@@ -40,31 +78,42 @@ enforcerMiddleware.on("error", (err) => {
   process.exit(1);
 });
 
-// app.use((req, res, next) => {
-//   const { operation } = req.enforcer;
+app.use(session({
+  store: new ConnectPgSimple({
+    pool
+  }),
+  secret: 'hellohi', //process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    maxAge: 2592000000 // 30 days written in milliseconds
+  }
+}));
 
-//   if (operation.security !== undefined) {
-//     const sessionIsRequired = operation.security.find(
-//       (obj) => obj.cookieAuth !== undefined
-//     );
+app.use(passport.initialize());
+app.use(passport.session());
 
-//     if (sessionIsRequired) {
-//       const cookie = req.cookies.todoSessionId;
+app.use((req, res, next) => {
+  const { operation } = req.enforcer;
 
-//       if (cookie === undefined || req.user === undefined) {
-//         res.status(401).send();
+  if (operation.security !== undefined) {
+    const sessionIsRequired = operation.security.find(
+      (obj) => obj.cookieAuth !== undefined
+    );
 
-//         return;
-//       }
-//     }
-//   }
+    if (sessionIsRequired && !req.user) {
+      res.sendStatus(401);
+      return;
+    }
+  }
 
-//   next();
-// });
+  next();
+});
 
 app.use(
   enforcerMiddleware.route({
     accounts: Accounts(pool),
+    authentication: Authentication(passport),
     funds: Funds(pool),
   })
 );

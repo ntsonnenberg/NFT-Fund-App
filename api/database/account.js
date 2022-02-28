@@ -6,12 +6,10 @@ exports.createAccount = async function (client, username, password, isManager) {
     uuid().toString().replace(/-/g, "").replace(/\D/g, "").substring(0, 7)
   );
 
-  const salt = await bcrypt.genSalt(10);
-
   const { rowCount } = await client.query({
     name: "create-account",
     text: "INSERT INTO accounts (account_id, username, password, is_manager) VALUES ($1, $2, $3, $4) ON CONFLICT DO NOTHING",
-    values: [accountId, username, await bcrypt.hash(password, salt), isManager],
+    values: [accountId, username, await encryptPassword(password), isManager],
   });
 
   return rowCount > 0 ? accountId : undefined;
@@ -27,9 +25,18 @@ exports.getAccount = async function (client, accountId) {
   return rows[0];
 };
 
+exports.getAccountByUsername = async function (client, username) {
+  const { rows } = await client.query({
+    name: "get-account-by-username",
+    text: "SELECT * FROM accounts WHERE username=$1",
+    values: [username],
+  });
+
+  return rows[0];
+};
+
 exports.updateAccount = async function (client, accountId, data) {
   const { username, password, isManager } = data;
-
   const values = [];
   const sets = [];
 
@@ -39,9 +46,7 @@ exports.updateAccount = async function (client, accountId, data) {
   }
 
   if (password !== undefined) {
-    const salt = await bcrypt.genSalt(10);
-
-    values.push(await bcrypt.hash(password, salt));
+    values.push(await encryptPassword(password));
     sets.push("password=$" + values.length);
   }
 
@@ -79,6 +84,12 @@ exports.deleteAccount = async function (client, accountId) {
 
   return rowCount > 0;
 };
+
+async function encryptPassword(password) {
+  const salt = await bcrypt.genSalt(10);
+
+  return await bycrpt.hash(password, salt);
+}
 
 exports.getFund = async function (client, fundId) {
   const { rows } = await client.query({
