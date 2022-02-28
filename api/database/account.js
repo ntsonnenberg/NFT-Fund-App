@@ -90,13 +90,3 @@ async function encryptPassword(password) {
 
   return await bcrypt.hash(password, salt);
 }
-
-exports.getFund = async function (client, fundId) {
-  const { rows } = await client.query({
-    name: "get-fund-by-id",
-    text: "SELECT * FROM funds WHERE fund_id=$1",
-    values: [fundId],
-  });
-
-  return rows[0];
-};

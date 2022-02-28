@@ -32,32 +32,43 @@ pool.query("SELECT NOW()", (err, res) => {
   }
 });
 
+// passport.use(
+//   new LocalStrategy((username, password, done) => {
+//     DatabaseAccounts.getAccountByUsername(pool, username)
+//       .then(async (account) => {
+//         if (account === undefined) {
+//           done(null, false);
+//         } else {
+//           const match = await bcrypt.compare(password, account.password);
+
+//           if (match) {
+//             done(null, {
+//               id: account.account_id,
+//               username: account.username,
+//               isManager: account.is_manager,
+//             });
+//           } else {
+//             const hash = await bcrypt.hash(password, 10);
+//             const m2 = await bcrypt.compare(password, hash);
+
+//             done(null, false);
+//           }
+//         }
+//       })
+//       .catch((err) => {
+//         done(err, null);
+//       });
+//   })
+// );
+
 passport.use(
-  new LocalStrategy((username, password, done) => {
-    DatabaseAccounts.getAccountByUsername(pool, username)
-      .then(async (account) => {
-        if (account === undefined) {
-          done(null, false);
-        } else {
-          const match = await bcrypt.compare(password, account.password);
+  new LocalStrategy(function (username, password, done) {
+    console.log("inside passport");
+    if (username && password === "pass") {
+      return done(null, { username: username });
+    }
 
-          if (match) {
-            done(null, {
-              id: account.account_id,
-              username: account.username,
-              isManager: account.is_manager,
-            });
-          } else {
-            const hash = await bcrypt.hash(password, 10);
-            const m2 = await bcrypt.compare(password, hash);
-
-            done(null, false);
-          }
-        }
-      })
-      .catch((err) => {
-        done(err, null);
-      });
+    return done(null, false);
   })
 );
 
@@ -84,18 +95,22 @@ enforcerMiddleware.on("error", (err) => {
   process.exit(1);
 });
 
+// app.use(
+//   session({
+//     store: new ConnectPgSimple({
+//       pool,
+//     }),
+//     secret: process.env.SESSION_SECRET,
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie: {
+//       maxAge: 2592000000, // 30 days written in milliseconds
+//     },
+//   })
+// );
+
 app.use(
-  session({
-    store: new ConnectPgSimple({
-      pool,
-    }),
-    secret: process.env.SESSION_SECRET,
-    resave: false,
-    saveUninitialized: true,
-    cookie: {
-      maxAge: 2592000000, // 30 days written in milliseconds
-    },
-  })
+  session({ secret: "secret key", resave: false, saveUninitialized: true })
 );
 
 app.use(passport.initialize());
@@ -104,14 +119,20 @@ app.use(passport.session());
 app.use((req, res, next) => {
   const { operation } = req.enforcer;
 
+  console.log(operation.security);
+
   if (operation.security !== undefined) {
     const sessionIsRequired = operation.security.find(
       (obj) => obj.cookieAuth !== undefined
     );
 
-    if (sessionIsRequired && !req.user) {
-      res.sendStatus(401);
-      return;
+    if (sessionIsRequired) {
+      const cookie = req.cookies.todoSessionId;
+
+      if (cookie === undefined || req.user === undefined) {
+        res.sendStatus(401);
+        return;
+      }
     }
   }
 
