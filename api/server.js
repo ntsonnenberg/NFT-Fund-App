@@ -63,9 +63,8 @@ pool.query("SELECT NOW()", (err, res) => {
 
 passport.use(
   new LocalStrategy(function (username, password, done) {
-    console.log("inside passport");
     if (username && password === "pass") {
-      return done(null, { username: username });
+      return done(null, { username: username, password: password });
     }
 
     return done(null, false);
@@ -116,28 +115,24 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req, res, next) => {
-  const { operation } = req.enforcer;
+// app.use((req, res, next) => {
+//   const { operation } = req.enforcer;
 
-  console.log(operation.security);
+//   if (operation.security !== undefined) {
+//     const sessionIsRequired = operation.security.find(
+//       (obj) => obj.cookieAuth !== undefined
+//     );
 
-  if (operation.security !== undefined) {
-    const sessionIsRequired = operation.security.find(
-      (obj) => obj.cookieAuth !== undefined
-    );
+//     console.log(req.user);
 
-    if (sessionIsRequired) {
-      const cookie = req.cookies.todoSessionId;
+//     if (sessionIsRequired && !req.user) {
+//       res.sendStatus(401);
+//       return;
+//     }
+//   }
 
-      if (cookie === undefined || req.user === undefined) {
-        res.sendStatus(401);
-        return;
-      }
-    }
-  }
-
-  next();
-});
+//   next();
+// });
 
 app.use(
   enforcerMiddleware.route({

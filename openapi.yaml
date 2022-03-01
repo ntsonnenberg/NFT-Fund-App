@@ -103,12 +103,16 @@ paths:
             schema:
               type: object
               required:
+                - username
                 - password
               properties:
+                username:
+                  type: string
                 password:
                   type: string
                   format: password
             example:
+              username: username
               password: password-here
       responses:
         200:
@@ -333,7 +337,7 @@ components:
     cookieAuth:
       type: apiKey
       in: cookie
-      name: todoSessionId
+      name: NFTSessionId
   schemas:
     Fund:
       type: object

@@ -1,6 +1,13 @@
 <template>
 <div>
-  <div>
+  <v-btn @click="addItem()">Click Me</v-btn>
+  <ul>
+    <li v-for="item in list" :key="item.text">
+      {{item.text}}
+    </li>
+  </ul>
+
+  <!-- <div>
     <form @submit="stopDefault">
       <input type="text" placeholder="YourName" v-model="fullname">
       <br />
@@ -19,7 +26,7 @@
 
       Your name: {{ fullname }}
     </form>
-  </div>
+  </div> -->
 </div>
 
 <!--
@@ -108,27 +115,20 @@ export default {
 
   data () {
     return {
-      fullname: '',
-      phone: '',
-      address: '',
-      picked: '',
-      messages: [
-        { id: '1', message: 'Foo', value: 'foo' },
-        { id: '2', message: 'Bar', value: 'bar' }
-      ]
+      text: ''
     }
   },
 
   methods: {
-    stopDefault ($event) {
-      console.log('Submitted')
-      $event.preventDefault ()
+    addItem() {
+      this.$store.commit('nft/add', this.text);
+      this.text = '';
     }
   },
    
   computed: {
-    hasName () {
-      return this.fullname.length > 0;
+    list () {
+      return this.$store.state.nft.list;
     }
   }
 }
