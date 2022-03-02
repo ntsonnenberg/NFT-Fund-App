@@ -51,8 +51,10 @@ paths:
         - cookieAuth: []
       summary: Delete an account
       responses:
-        204:
+        200:
           description: Account deleted.
+        204:
+          description: Account not found.
         401:
           description: Not authenticated.
         403:
@@ -85,10 +87,12 @@ paths:
       responses:
         200:
           description: Account updated.
+        404:
+          description: Account not found.
         401:
           description: Not authenticated.
         403:
-          description: Access denied
+          description: Access denied.
   /authentication/login:
     x-controller: authentication
     put:

@@ -5,8 +5,6 @@ module.exports = function (pool) {
     async createAccount(req, res) {
       const { username, password, isManager } = req.enforcer.body;
 
-      console.log("inside create account");
-
       const accountId = await accounts.createAccount(
         pool,
         username,
@@ -58,6 +56,8 @@ module.exports = function (pool) {
     async deleteAccount(req, res) {
       const { username } = req.enforcer.params;
 
+      const client = await pool.connect();
+
       try {
         await client.query("BEGIN");
 
@@ -68,7 +68,7 @@ module.exports = function (pool) {
         } else if (account.account_id !== req.user.id) {
           res.enforcer.status(403).send();
         } else {
-          await accounts.deleteAccount(pool, account.id);
+          await accounts.deleteAccount(pool, account.account_id);
 
           res.enforcer.status(200).send();
         }
