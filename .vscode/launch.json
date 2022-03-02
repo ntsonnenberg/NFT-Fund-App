@@ -11,6 +11,10 @@
             "skipFiles": [
                 "<node_internals>/**"
             ],
+            "outFiles": [
+                "${workspaceFolder}/**/*.js",
+                "!**/node_modules/**"
+            ],
             "program": "${workspaceFolder}\\api\\index.js"
         }
     ]

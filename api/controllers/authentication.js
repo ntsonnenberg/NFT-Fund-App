@@ -1,15 +1,16 @@
 module.exports = function (passport) {
   const authenticate = passport.authenticate("local");
-  console.log(authenticate);
 
   return {
     login(req, res, next) {
-      console.log("inside login");
-      authenticate((req, res, err) => {
-        console.log("inside auth");
+      authenticate(req, res, (err) => {
         if (err) {
           return next(err);
         }
+
+        res.cookie("user", JSON.stringify(req.user.name), {
+          maxAge: 36000000, // expires in 10 hours
+        });
 
         res.enforcer.status(200).send();
       });

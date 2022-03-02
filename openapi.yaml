@@ -92,7 +92,7 @@ paths:
   /authentication/login:
     x-controller: authentication
     put:
-      x-operator: login
+      x-operation: login
       tags:
         - Authentication
       summary: Log in
