@@ -5,7 +5,8 @@ module.exports = function (pool) {
     async addFund(req, res) {
       const { title, description, ownerId, memberIds, capital } =
         req.enforcer.body;
-      const fundId = await funds.createFund(
+
+      const ids = await funds.createFund(
         pool,
         title,
         description,
@@ -14,12 +15,12 @@ module.exports = function (pool) {
         capital
       );
 
-      if (fundId) {
+      if (ids !== undefined) {
         res
-          .send("location", "/api/funds/ + " + fundId)
+          .send("location", "/api/funds/ + " + ids.fundId)
           .enforcer.status(201)
           .send({
-            FundId: fundId,
+            FundId: ids.fundId,
             title: title,
             description: description,
             ownerId: ownerId,

@@ -68,7 +68,7 @@ module.exports = function (pool) {
         } else if (account.account_id !== req.user.id) {
           res.enforcer.status(403).send();
         } else {
-          await accounts.deleteAccount(pool, account.account_id);
+          await accounts.deleteAccount(client, account.account_id);
 
           res.enforcer.status(200).send();
         }
