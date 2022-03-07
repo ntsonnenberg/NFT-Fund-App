@@ -6,8 +6,10 @@ module.exports = function (pool) {
       const { title, description, ownerId, memberIds, capital } =
         req.enforcer.body;
 
+      const client = await pool.connect();
+
       const ids = await funds.createFund(
-        pool,
+        client,
         title,
         description,
         ownerId,
@@ -15,7 +17,9 @@ module.exports = function (pool) {
         capital
       );
 
-      if (ids !== undefined) {
+      console.log(ids);
+
+      if (ids) {
         res
           .send("location", "/api/funds/ + " + ids.fundId)
           .enforcer.status(201)

@@ -12,6 +12,8 @@ exports.createAccount = async function (client, username, password, isManager) {
     values: [accountId, username, await encryptPassword(password), isManager],
   });
 
+  console.log(rowCount);
+
   return rowCount > 0 ? accountId : undefined;
 };
 
