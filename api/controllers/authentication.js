@@ -8,7 +8,7 @@ module.exports = function (passport) {
           return next(err);
         }
 
-        res.cookie("user", JSON.stringify(req.user.username), {
+        res.cookie("user", req.user.username, {
           maxAge: 36000000, // expires in 10 hours
         });
 
@@ -20,6 +20,8 @@ module.exports = function (passport) {
       if (req.user) {
         req.logout();
       }
+
+      res.clearCookie("user");
 
       res.enforcer.status(200).send();
     },

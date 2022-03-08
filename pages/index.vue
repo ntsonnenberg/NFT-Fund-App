@@ -1,11 +1,18 @@
 <template>
 <div>
   <h1>Authentication</h1>
+  <div>
+    <input v-model="username" placeholder="username">
+  </div>
+  <div>
+    <input v-model="password" placeholder="password">
+  </div>
+    
   <v-btn @click="login()">Log In</v-btn>
   <v-btn @click="logout()">Log Out</v-btn>
 
   <div v-if="user !== null">
-    Logged in as {{user}}
+    Logged in as {{ user }}
   </div>
 </div>
 </template>
@@ -16,15 +23,16 @@ export default {
 
   data () {
     return {
-      text: ''
+      username: '',
+      password: ''
     }
   },
 
   methods: {
     login () {
       this.$store.dispatch('accounts/login', {
-        username: 'sonny',
-        password: 'password'
+        username: this.username,
+        password: this.password
       });
     },
 

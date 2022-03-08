@@ -32,10 +32,8 @@ export const actions = {
 };
 
 function getUserFromCookie() {
-  const re = new RegExp("user=([^;]+)");
+  const re = new RegExp(/user=([^;]+)/);
   const value = re.exec(document.cookie);
-
-  console.log(value);
 
   return value != null ? unescape(value[1]) : null;
 }
