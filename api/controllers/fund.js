@@ -38,28 +38,85 @@ module.exports = function (pool) {
       const fundId = req.enforcer.params.fundId;
       const client = await pool.connect();
 
-      const fundCapital = await funds.getFund(client, fundId);
+      const [fund, capital] = await funds.getFund(client, fundId);
 
-      if (fundCapital) {
+      if (fund && capital) {
         res
-          .set("location", "/api/funds/ + " + fundCapital[0].fundId)
+          .set("location", "/api/funds/ + " + fund.fundId)
           .enforcer.status(200)
           .send({
-            FundId: fundCapital[0].fund_id,
-            title: fundCapital[0].title,
-            description: fundCapital[0].description,
-            ownerId: fundCapital[0].owner_id,
-            memberIds: fundCapital[0].members,
-            capital: fundCapital[1],
+            FundId: fund.fund_id,
+            title: fund.title,
+            description: fund.description,
+            ownerId: fund.owner_id,
+            memberIds: fund.members,
+            capital: capital,
           });
       } else {
         res.enforcer.status(400).send();
       }
     },
 
-    async updateFund(req, res) {},
+    async updateFund(req, res) {
+      const newData = req.enforcer.body;
+      const { fundId } = req.enforcer.params;
 
-    async deleteFund(req, res) {},
+      const client = await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        let [fund, capital] = await funds.getFund(client, fundId);
+
+        if (fund == undefined || capital === undefined) {
+          res.enforcer.status(404).send();
+        }
+
+        if (fund.fund_id !== fundId) {
+          res.enforcer.status(403).send();
+        } else {
+          await funds.updateFund(client, fund, newData);
+
+          res.enforcer.status(200).send();
+        }
+
+        await client.query("COMMIT");
+      } catch (e) {
+        await client.query("ROLLBACK");
+
+        throw e;
+      } finally {
+        client.release();
+      }
+    },
+
+    async deleteFund(req, res) {
+      const { fundId } = req.enforcer.params;
+
+      const client = await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        let [fund, capital] = await funds.getFund(client, fundId);
+
+        if (fund === undefined || capital == undefined) {
+          res.enforcwer.status(204).send();
+        } else if (fund.fund_id !== fundId) {
+          res.enforcer.status(403).send();
+        } else {
+          await funds.deleteFund(client, fund);
+
+          res.enforcer.status(200).send();
+        }
+      } catch (e) {
+        await client.query("ROLLBACK");
+
+        throw e;
+      } finally {
+        client.release();
+      }
+    },
 
     async addMember(req, res) {},
 

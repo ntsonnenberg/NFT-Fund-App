@@ -1,3 +1,5 @@
+const { set } = require("../server");
+
 const uuid = require("uuid").v4;
 
 exports.createFund = async function (
@@ -58,4 +60,106 @@ exports.getFund = async function (client, fundId) {
   });
 
   return [fundRow[0], capitalRow[0]];
+};
+
+exports.updateFund = async function (client, fund, newData) {
+  const { title, description, ownerId, memberIds, capital } = newData;
+  let values = [];
+  let sets = [];
+
+  if (capital.ETH !== undefined) {
+    values.push(capital.ETH);
+    sets.push("eth=$" + values.length);
+  }
+
+  if (capital.SOL !== undefined) {
+    values.push(capital.SOL);
+    sets.push("sol=$" + values.length);
+  }
+
+  if (capital.AVAX !== undefined) {
+    values.push(capital.AVAX);
+    sets.push("avax=$" + values.length);
+  }
+
+  if (capital.XRP !== undefined) {
+    values.push(capital.XRP);
+    sets.push("xrp=$" + values.length);
+  }
+
+  values.push(fund.capital_id);
+
+  const { rows: capitalRows } = await client.query({
+    name: "update-capital",
+    text:
+      "UPDATE capitals SET " +
+      sets.join(", ") +
+      " WHERE capital_id=$" +
+      values.length +
+      " RETURNING *",
+    values,
+  });
+
+  values = [];
+  sets = [];
+
+  if (title !== undefined) {
+    values.push(title);
+    sets.push("title=$" + values.length);
+  }
+
+  if (description !== undefined) {
+    values.push(description);
+    sets.push("description=$" + values.length);
+  }
+
+  if (ownerId !== undefined) {
+    values.push(ownerId);
+    sets.push("owner_id=$" + values.length);
+  }
+
+  if (fund.capital_id !== undefined) {
+    values.push(fund.capital_id);
+    sets.push("capital_id=$" + values.length);
+  }
+
+  if (memberIds !== undefined) {
+    values.push(memberIds);
+    sets.push("members=$" + values.length);
+  }
+
+  values.push(fund.fund_id);
+
+  const { rows: fundRows } = await client.query({
+    name: "update-fund",
+    text:
+      "UPDATE funds SET " +
+      sets.join(", ") +
+      " WHERE fund_id=$" +
+      values.length +
+      " RETURNING *",
+    values,
+  });
+
+  return [fundRows, capitalRows];
+};
+
+exports.deleteFund = async function (client, fund) {
+  console.log(fund);
+
+  const { rowCount: rowFundCount } = await client.query({
+    name: "delete-fund",
+    text: "DELETE FROM funds WHERE fund_id=$1",
+    values: [fund.fund_id],
+  });
+
+  const { rowCount: rowCapitalCount } = await client.query({
+    name: "delete-capital",
+    text: "DELETE FROM capitals WHERE capital_id=$1",
+    values: [fund.capital_id],
+  });
+
+  console.log(rowFundCount, rowCapitalCount);
+
+  return rowFundCount > 0 && rowCapitalCount > 0;
 };

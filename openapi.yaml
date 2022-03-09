@@ -232,10 +232,6 @@ paths:
       responses:
         200:
           description: Fund updated.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fund"
         400:
           description: Invalid request.
         401:
@@ -252,8 +248,10 @@ paths:
         - cookieAuth: []
       summary: Delete a fund
       responses:
-        204:
+        200:
           description: Fund deleted.
+        204:
+          description: Fund not found.
         401:
           description: Not authenticated.
         403:
