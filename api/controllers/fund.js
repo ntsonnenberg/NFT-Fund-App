@@ -1,3 +1,4 @@
+const accounts = require("../database/account");
 const funds = require("../database/fund");
 
 module.exports = function (pool) {
@@ -109,6 +110,8 @@ module.exports = function (pool) {
 
           res.enforcer.status(200).send();
         }
+
+        await client.query("COMMIT");
       } catch (e) {
         await client.query("ROLLBACK");
 
@@ -118,8 +121,80 @@ module.exports = function (pool) {
       }
     },
 
-    async addMember(req, res) {},
+    async addMember(req, res) {
+      const { fundId, username } = req.enforcer.params;
 
-    async removeMember(req, res) {},
+      const client = await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        let account = await accounts.getAccountByUsername(client, username);
+        let [fund, capital] = await funds.getFund(client, fundId);
+
+        if (
+          account === undefined ||
+          fund === undefined ||
+          capital === undefined
+        ) {
+          res.enforcer.status(404).send();
+        } else if (
+          account.account_id !== req.user.id ||
+          fund.fund_id !== fundId
+        ) {
+          res.enforcer.status(403).send();
+        } else {
+          await funds.addMember(client, account, fund);
+
+          res.enforcer.status(200).send();
+        }
+
+        await client.query("COMMIT");
+      } catch (e) {
+        await client.query("ROLLBACK");
+
+        throw e;
+      } finally {
+        client.release();
+      }
+    },
+
+    async removeMember(req, res) {
+      const { fundId, username } = req.enforcer.params;
+
+      const client = await pool.connect();
+
+      try {
+        await client.query("BEGIN");
+
+        let account = await accounts.getAccountByUsername(client, username);
+        let [fund, capital] = await funds.getFund(client, fundId);
+
+        if (
+          account === undefined ||
+          fund === undefined ||
+          capital === undefined
+        ) {
+          res.enforcer.status(404).send();
+        } else if (
+          account.account_id !== req.user.id ||
+          fund.fund_id !== fundId
+        ) {
+          res.enforcer.status(403).send();
+        } else {
+          await funds.removeMember(client, account, fund);
+
+          res.enforcer.status(200).send();
+        }
+
+        await client.query("COMMIT");
+      } catch (e) {
+        await client.query("ROLLBACK");
+
+        throw e;
+      } finally {
+        client.release();
+      }
+    },
   };
 };

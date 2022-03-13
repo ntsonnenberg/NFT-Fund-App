@@ -145,8 +145,6 @@ exports.updateFund = async function (client, fund, newData) {
 };
 
 exports.deleteFund = async function (client, fund) {
-  console.log(fund);
-
   const { rowCount: rowFundCount } = await client.query({
     name: "delete-fund",
     text: "DELETE FROM funds WHERE fund_id=$1",
@@ -159,7 +157,25 @@ exports.deleteFund = async function (client, fund) {
     values: [fund.capital_id],
   });
 
-  console.log(rowFundCount, rowCapitalCount);
-
   return rowFundCount > 0 && rowCapitalCount > 0;
+};
+
+exports.addMember = async function (client, account, fund) {
+  const { rowCount } = await client.query({
+    name: "add-member",
+    text: "UPDATE funds SET members = members || array[$1]::integer[] WHERE fund_id=$2",
+    values: [account.account_id, fund.fund_id],
+  });
+
+  return rowCount > 0;
+};
+
+exports.removeMember = async function (client, account, fund) {
+  const { rowCount } = await client.query({
+    name: "remove-member",
+    text: "UPDATE funds SET members = array_remove(members, $1) WHERE fund_id=$2",
+    values: [account.account_id, fund.fund_id],
+  });
+
+  return rowCount > 0;
 };

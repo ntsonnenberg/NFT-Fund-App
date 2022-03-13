@@ -268,15 +268,9 @@ paths:
       security:
         - cookieAuth: []
       summary: Add a member to a fund
-      requestBody:
-        $ref: "#/components/requestBodies/SetFund"
       responses:
         200:
           description: Member added.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fund"
         400:
           description: Invalid request.
         401:
@@ -297,15 +291,9 @@ paths:
       security:
         - cookieAuth: []
       summary: Remove a member from a fund
-      requestBody:
-        $ref: "#/components/requestBodies/SetFund"
       responses:
         200:
           description: Member removed.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Fund"
         400:
           description: Invalid request.
         401:
