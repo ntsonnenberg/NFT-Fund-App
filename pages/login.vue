@@ -1,0 +1,64 @@
+<template>
+    <div>
+        <div>
+            <NuxtLink to="/">Home</NuxtLink>
+        </div>
+        <h1>Login</h1>
+        <div>
+            <input v-model="username" placeholder="username">
+        </div>
+        <div>
+            <input v-model="password" placeholder="password">
+        </div>
+            
+        <v-btn @click="login()">Log In</v-btn>
+
+        <div v-if="user !== null">
+            <v-btn @click="logout()">Log Out</v-btn>
+        </div>
+
+        <div v-if="user !== null">
+            Logged in as {{ user }}
+        </div>
+    </div>
+</template>
+
+<script>
+export default {
+  name: 'LoginPage',
+
+  data () {
+    return {
+      username: '',
+      password: ''
+    }
+  },
+
+  methods: {
+    login () {
+      this.$store.dispatch('accounts/login', {
+        username: this.username,
+        password: this.password
+      });
+    },
+
+    logout () {
+      this.$store.dispatch('accounts/logout');
+    },
+
+    // getUser() {
+    //     return this.$store.getter.accounts.getUser;
+    // }
+  },
+   
+  computed: {
+    list () {
+      return this.$store.state.nft.list;
+    },
+
+    user () {
+      return this.$store.state.accounts.user;
+    },
+  }
+}
+</script>

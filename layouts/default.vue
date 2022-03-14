@@ -23,6 +23,9 @@
           </v-list-item-content>
         </v-list-item>
       </v-list>
+      <div v-if="user !== null">
+        <v-btn @click="logout()">Log Out</v-btn>
+      </div>
     </v-navigation-drawer>
     <v-app-bar
       :clipped-left="clipped"
@@ -112,6 +115,18 @@ export default {
       right: true,
       rightDrawer: false,
       title: 'Vuetify.js'
+    }
+  },
+
+  methods: {
+    logout () {
+      this.$store.dispatch('accounts/logout');
+    }
+  },
+
+  computed: {
+    user () {
+      return this.$store.state.accounts.user
     }
   }
 }

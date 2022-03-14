@@ -1,54 +1,13 @@
 <template>
 <div>
-  <h1>Authentication</h1>
-  <div>
-    <input v-model="username" placeholder="username">
-  </div>
-  <div>
-    <input v-model="password" placeholder="password">
-  </div>
-    
-  <v-btn @click="login()">Log In</v-btn>
-  <v-btn @click="logout()">Log Out</v-btn>
-
-  <div v-if="user !== null">
-    Logged in as {{ user }}
-  </div>
+  <NuxtLink to="/login">Login</NuxtLink>
+  <h1>Home Page</h1>
 </div>
+  
 </template>
 
 <script>
-export default {
-  name: 'IndexPage',
-
-  data () {
-    return {
-      username: '',
-      password: ''
-    }
-  },
-
-  methods: {
-    login () {
-      this.$store.dispatch('accounts/login', {
-        username: this.username,
-        password: this.password
-      });
-    },
-
-    logout () {
-      this.$store.dispatch('accounts/logout');
-    }
-  },
-   
-  computed: {
-    list () {
-      return this.$store.state.nft.list;
-    },
-
-    user () {
-      return this.$store.state.accounts.user;
-    }
+  export default {
+    name: 'IndexPage'
   }
-}
 </script>
