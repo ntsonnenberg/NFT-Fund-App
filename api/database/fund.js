@@ -1,5 +1,3 @@
-const { set } = require("../server");
-
 const uuid = require("uuid").v4;
 
 exports.createFund = async function (
