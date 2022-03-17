@@ -1,4 +1,5 @@
 const accounts = require("../database/account");
+const funds = require("../database/fund");
 
 module.exports = function (pool) {
   return {
@@ -63,9 +64,17 @@ module.exports = function (pool) {
 
         let account = await accounts.getAccountByUsername(client, username);
 
+        const { rows } = await client.query({
+          name: "find-fund-of-account",
+          text: "SELECT fund_id FROM funds WHERE owner_id=$1",
+          values: [account.account_id],
+        });
+
+        const fundId = rows[0].fund_id;
+
         if (account === undefined) {
           res.enforcer.status(204).send();
-        } else if (account.account_id !== req.user.id) {
+        } else if (account.account_id !== req.user.id || fundId !== undefined) {
           res.enforcer.status(403).send();
         } else {
           await accounts.deleteAccount(client, account.account_id);

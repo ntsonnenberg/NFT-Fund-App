@@ -19,23 +19,41 @@ exports.createFund = async function (
   try {
     await client.query("BEGIN");
 
-    const { rowCount: rowCapitalCount } = await client.query({
-      name: "create-capital",
-      text: "INSERT INTO capitals (capital_id, eth, sol, avax, xrp) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING",
-      values: [capitalId, capital.ETH, capital.SOL, capital.AVAX, capital.XRP],
+    const { rows } = await client.query({
+      name: "get-owner-account",
+      text: "SELECT * FROM accounts WHERE account_id=$1",
+      values: [ownerId],
     });
 
-    const { rowCount: rowFundCount } = await client.query({
-      name: "create-fund",
-      text: "INSERT INTO funds (fund_id, title, description, owner_id, capital_id, members) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING",
-      values: [fundId, title, description, ownerId, capitalId, memberIds],
-    });
+    const account = rows[0];
 
-    await client.query("COMMIT");
+    if (account.is_manager) {
+      const { rowCount: rowCapitalCount } = await client.query({
+        name: "create-capital",
+        text: "INSERT INTO capitals (capital_id, eth, sol, avax, xrp) VALUES ($1, $2, $3, $4, $5) ON CONFLICT DO NOTHING",
+        values: [
+          capitalId,
+          capital.ETH,
+          capital.SOL,
+          capital.AVAX,
+          capital.XRP,
+        ],
+      });
 
-    return rowCapitalCount > 0 && rowFundCount > 0
-      ? { fundId: fundId, capitalId: capitalId }
-      : undefined;
+      const { rowCount: rowFundCount } = await client.query({
+        name: "create-fund",
+        text: "INSERT INTO funds (fund_id, title, description, owner_id, capital_id, members) VALUES ($1, $2, $3, $4, $5, $6) ON CONFLICT DO NOTHING",
+        values: [fundId, title, description, ownerId, capitalId, memberIds],
+      });
+
+      await client.query("COMMIT");
+
+      return rowCapitalCount > 0 && rowFundCount > 0
+        ? { fundId: fundId, capitalId: capitalId }
+        : undefined;
+    } else {
+      return undefined;
+    }
   } catch (e) {
     console.log("Error:", e.message);
     await client.query("ROLLBACK");

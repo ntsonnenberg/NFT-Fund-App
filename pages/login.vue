@@ -45,11 +45,7 @@ export default {
     logout () {
       this.$store.dispatch('accounts/logout');
     },
-
-    // getUser() {
-    //     return this.$store.getter.accounts.getUser;
-    // }
-  },
+  },  
    
   computed: {
     list () {

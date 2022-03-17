@@ -1,7 +1,7 @@
 <template>
 <div>
   <NuxtLink to="/login">Login</NuxtLink>
-  <h1>Home Page</h1>
+  <h1>NFT Fund</h1>
 </div>
   
 </template>
