@@ -5,13 +5,27 @@
       fixed
       app
     >
-      <div class="logo">
-        <NuxtLink to="/"><img src="../img/NFT_Fund_Logo.png"></NuxtLink>
-      </div>
-      <v-toolbar-title v-text="title" />
+      <NuxtLink to="/"><img src="../img/NFT_Fund_Logo.png"></NuxtLink>
+      <NuxtLink to="/">
+        <v-toolbar-title v-text="title" class="pl-2"/>
+      </NuxtLink>
+      <NuxtLink to="/funds">
+      <v-toolbar-title v-text="funds" class="pl-15"/>
+      </NuxtLink>
+      <NuxtLink to="/users">
+        <v-toolbar-title v-text="users" class="pl-15"/>
+      </NuxtLink>
       <v-spacer />
+      <div v-if="user === null">
+        <NuxtLink to="/login" id="loginTab">Log In</NuxtLink>
+      </div>
+      <div v-if="user !== null" class="pr-10">
+        <NuxtLink to="/account" id="accountTab">Account</NuxtLink>
+      </div>
       <div v-if="user !== null">
-        <v-btn @click="logout()">Log Out</v-btn>
+        <NuxtLink to="/" id="logoutTab">
+          <button @click="logout()">Log Out</button>
+        </NuxtLink>
       </div>
     </v-app-bar>
 
@@ -53,7 +67,9 @@
         miniVariant: false,
         right: true,
         rightDrawer: false,
-        title: 'Bit-Fund'
+        title: 'Bit-Fund',
+        funds: 'Funds',
+        users: 'Users',
       }
     },
 
@@ -79,5 +95,10 @@
   img {
     width: 50px;
     height: 50px;
+  }
+
+a {
+    text-decoration: none;
+    color: white !important;
   }
 </style>

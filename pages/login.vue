@@ -1,26 +1,24 @@
 <template>
-    <div>
-        <div>
-            <NuxtLink to="/">Home</NuxtLink>
-        </div>
-        <h1>Login</h1>
-        <div>
-            <input v-model="username" placeholder="username">
-        </div>
-        <div>
-            <input v-model="password" placeholder="password">
-        </div>
-            
-        <v-btn @click="login()">Log In</v-btn>
-
-        <div v-if="user !== null">
-            <v-btn @click="logout()">Log Out</v-btn>
+  <v-layout>
+    <v-flex align-self-center>
+      <h1 class="pt-10">Login</h1>
+      <v-form>
+        <div class="pt-5">
+            <label for="username">username:</label>
+            <input id="username" v-model="username" placeholder="insert your username">
         </div>
 
-        <div v-if="user !== null">
-            Logged in as {{ user }}
+        <div class="pt-5">
+          <label for="password">password:</label>
+            <input id="password" v-model="password" placeholder="insert your password">
         </div>
-    </div>
+        
+        <div class="pt-7">
+          <v-btn @click="login()">Log In</v-btn>
+        </div>
+      </v-form>
+    </v-flex>
+  </v-layout>
 </template>
 
 <script>
@@ -35,11 +33,15 @@ export default {
   },
 
   methods: {
-    login () {
-      this.$store.dispatch('accounts/login', {
+    async login () {
+      await this.$store.dispatch('accounts/login', {
         username: this.username,
         password: this.password
       });
+
+      if (this.user !== null) {
+        this.$router.push("/account");
+      }
     },
 
     logout () {
@@ -58,3 +60,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  div.layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: end;
+  }
+
+  input {
+    color: white;
+  }
+</style>
