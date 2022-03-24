@@ -1,23 +1,31 @@
 <template>
   <v-layout>
-    <v-flex align-self-center>
-      <h1 class="pt-10">Login</h1>
-      <v-form>
-        <div class="pt-5">
-            <label for="username">username:</label>
-            <input id="username" v-model="username" placeholder="insert your username">
-        </div>
+      <v-flex align-self-center>
+        <v-card width="25em" height="20em">
+          <h1 class="pt-10" align="center">Login</h1>
+          <v-form>
+            <div align="center">
+            <div class="pt-5">
+                <label for="username">username:</label>
+                <input id="username" v-model="username" placeholder="insert your username">
+            </div>
 
-        <div class="pt-5">
-          <label for="password">password:</label>
-            <input id="password" v-model="password" placeholder="insert your password">
-        </div>
-        
-        <div class="pt-7">
-          <v-btn @click="login()">Log In</v-btn>
-        </div>
-      </v-form>
-    </v-flex>
+            <div class="pt-5">
+              <label for="password">password:</label>
+                <input id="password" v-model="password" placeholder="insert your password">
+            </div>
+
+            <div class="signup pt-5 pr-3">
+                <NuxtLink to="/signup">Sign Up Here</NuxtLink>
+            </div>
+            
+            <div class="pt-7">
+              <v-btn @click="login()">Log In</v-btn>
+            </div>
+            </div>
+          </v-form>
+        </v-card>
+      </v-flex>
   </v-layout>
 </template>
 
@@ -70,5 +78,10 @@ export default {
 
   input {
     color: white;
+  }
+
+  div.signup {
+    display: flex;
+    justify-content: end;
   }
 </style>
