@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <v-layout class="pt-15">
     <v-flex align-self-center>
       <v-card width="25em" height="20em">
         <h1 class="pt-10" align="center">Sign Up</h1>
@@ -15,14 +15,12 @@
               <input id="password" v-model="password" placeholder="insert your password">
             </div>
 
-            <div class="pt-5">
-              <div styles="align-items:center">
-              <v-switch v-model="isManage" label="Are you a fund manager?"></v-switch>
-              </div>
+            <div class="d-flex">
+            <v-switch v-model="isManager" label="Are you a fund manager?" color="success"></v-switch>
             </div>
             
-            <div class="pt-7">
-              <v-btn @click="login()">Sign Up</v-btn>
+            <div class="pt-3">
+              <v-btn @click="signup()">Sign Up</v-btn>
             </div>
           </div>
         </v-form>
@@ -39,12 +37,29 @@
       return {
         username: '',
         password: '',
-        isManager: ''
+        isManager: null
       }
     },
 
     methods: {
+      async signup () {
+        console.log(this.isManager);
 
+        await this.$store.dispatch('accounts/signup', {
+          username: this.username,
+          password: this.password,
+          isManager: this.isManager
+        });
+
+        await this.$store.dispatch('accounts/login', {
+          username: this.username,
+          password: this.password
+        });
+
+        if (this.user !== null) {
+          this.$router.push("/account");
+        }
+      }
     },
 
     computed: {
@@ -69,8 +84,7 @@
     justify-content: end;
   }
 
-  label.v-label.theme--dark {
-    display: flex;
+  div.d-flex {
     justify-content: center;
   }
 </style>

@@ -1,5 +1,11 @@
 <template>
-  <h1>Hello {{ user }}!</h1>
+<v-layout>
+    <h1>Hello {{ user }}!</h1>
+
+    <div>
+
+    </div>
+</v-layout>
 </template>
 
 <script>
@@ -13,7 +19,7 @@ export default {
     },
 
     methods: {
-
+        
     },
 
     computed: {

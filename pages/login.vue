@@ -1,5 +1,5 @@
 <template>
-  <v-layout>
+  <v-layout class="pt-15">
       <v-flex align-self-center>
         <v-card width="25em" height="20em">
           <h1 class="pt-10" align="center">Login</h1>

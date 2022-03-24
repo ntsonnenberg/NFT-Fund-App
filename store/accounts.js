@@ -29,6 +29,18 @@ export const actions = {
       commit("setUser", null);
     }
   },
+
+  async signup({ commit, state }, { username, password, isManager }) {
+    const res = await this.$axios.post("api/accounts", {
+      username,
+      password,
+      isManager,
+    });
+
+    if (res.status === 201) {
+      commit("setUser", null);
+    }
+  },
 };
 
 function getUserFromCookie() {
