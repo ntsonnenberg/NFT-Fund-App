@@ -58,10 +58,6 @@ export default {
   },  
    
   computed: {
-    list () {
-      return this.$store.state.nft.list;
-    },
-
     user () {
       return this.$store.state.accounts.user;
     },

@@ -91,5 +91,22 @@ module.exports = function (pool) {
         client.release();
       }
     },
+
+    async getAccount(req, res) {
+      const { accountId } = req.enforcer.params;
+      const client = await pool.connect();
+
+      let account = await accounts.getAccount(client, accountId);
+
+      if (account) {
+        res.enforcer.status(200).send({
+          accountId: account.account_id,
+          username: account.username,
+          isManager: account.is_manager,
+        });
+      } else {
+        res.enforcer.status(400).send();
+      }
+    },
   };
 };

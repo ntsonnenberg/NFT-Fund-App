@@ -61,16 +61,6 @@ passport.use(
   })
 );
 
-// passport.use(
-//   new LocalStrategy(function (username, password, done) {
-//     if (username && password === "pass") {
-//       return done(null, { username: username });
-//     }
-
-//     return done(null, false);
-//   })
-// );
-
 passport.serializeUser((user, done) => {
   done(null, JSON.stringify(user));
 });
@@ -107,10 +97,6 @@ app.use(
     },
   })
 );
-
-// app.use(
-//   session({ secret: "secret key", resave: false, saveUninitialized: true })
-// );
 
 app.use(passport.initialize());
 app.use(passport.session());
