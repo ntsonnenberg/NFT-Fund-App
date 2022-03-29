@@ -1,7 +1,7 @@
 <template>
   <v-layout class="pt-15">
     <v-flex align-self-center>
-      <v-card width="25em" height="20em">
+      <v-card width="25em" height="20em" elevation="5">
         <h1 class="pt-10" align="center">Sign Up</h1>
         <v-form>
           <div align="center">

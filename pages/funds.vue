@@ -1,8 +1,10 @@
 <template>
-    <div>
-        <h1>This is the funds page</h1>
-        <fund-card @view="showFundName" />
-    </div>
+    <v-layout>
+        <div class="pt-5">
+            <h1>This is the funds page</h1>
+            <fund-card @view="showFundName" />
+        </div>
+    </v-layout>
 </template>
 
 <script>

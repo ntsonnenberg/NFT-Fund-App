@@ -1,7 +1,7 @@
 <template>
   <v-layout class="pt-15">
       <v-flex align-self-center>
-        <v-card width="25em" height="20em">
+        <v-card width="25em" height="20em" elevation="5">
           <h1 class="pt-10" align="center">Login</h1>
           <v-form>
             <div align="center">
@@ -12,7 +12,7 @@
 
             <div class="pt-5">
               <label for="password">password:</label>
-                <input id="password" v-model="password" placeholder="insert your password">
+              <input id="password" v-model="password" placeholder="insert your password">
             </div>
 
             <div class="signup pt-5 pr-3">
