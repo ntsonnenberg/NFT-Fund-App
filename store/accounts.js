@@ -41,6 +41,18 @@ export const actions = {
       commit("setUser", null);
     }
   },
+
+  async updateUser({ commit, state }, { username, password, isManager }) {
+    const res = await this.$axios.put(`api/accounts/${state.user}`, {
+      username,
+      password,
+      isManager,
+    });
+
+    if (res.status === 200) {
+      commit("setUser", res.data.username);
+    }
+  },
 };
 
 function getUserFromCookie() {

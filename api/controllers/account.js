@@ -39,9 +39,19 @@ module.exports = function (pool) {
         } else if (account.account_id !== req.user.id) {
           res.enforcer.status(403).send();
         } else {
-          await accounts.updateAccount(client, req.user.id, data);
+          let updatedAccount = await accounts.updateAccount(
+            client,
+            req.user.id,
+            data
+          );
 
-          res.enforcer.status(200).send();
+          console.log(updatedAccount);
+
+          res.enforcer.status(200).send({
+            accountId: updatedAccount.account_id,
+            username: updatedAccount.username,
+            isManager: updatedAccount.is_manager,
+          });
         }
 
         await client.query("COMMIT");
