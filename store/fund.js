@@ -1,6 +1,6 @@
 export const state = function () {
   return {
-    list: [],
+    fund: {},
   };
 };
 
@@ -8,15 +8,13 @@ export const mutations = {
   setFund(state, fund) {
     console.log(fund);
 
-    state.list.push({
-      fund,
-      done: false,
-    });
+    state.fund = fund;
   },
 };
 
 export const actions = {
   async getFund({ commit, state }, fundId) {
+    console.log("inside getFund");
     const res = await this.$axios.get(`api/funds/${fundId}`);
 
     const owner = getOwner(res.data.ownerId);
@@ -41,7 +39,7 @@ export const actions = {
   },
 };
 
-async function getOwner(accountId) {
+export async function getOwner(accountId) {
   const res = await this.$axios.get(`api/accounts/${accountId}`);
 
   return res.data.username;

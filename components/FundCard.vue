@@ -1,8 +1,8 @@
 <template>
-    <v-card v-if="list !== []" width="30em" elevation="10">
-        <v-card-title>{{ list[0].fund.title }}</v-card-title>
-        <v-card-subtitle>{{ list[0].fund.ownerName }}</v-card-subtitle>
-        <v-card-text>{{ list[0].fund.description }}</v-card-text>
+    <v-card @load="getFund()" v-if="fund !== null" width="30em" elevation="10">
+        <v-card-title>{{ fund.title }}</v-card-title>
+        <v-card-subtitle>{{ fund.ownerName }}</v-card-subtitle>
+        <v-card-text>{{ fund.description }}</v-card-text>
         <v-card-actions class="d-flex">
             <v-btn text color="green">Request to Join</v-btn>
             <v-btn text color="green">View Capital Holdings</v-btn>
@@ -21,7 +21,7 @@ export default {
     name: 'FundCardComponent',
 
     mounted() {
-        this.getFundList();
+        this.getFund();
     },
 
     data() {
@@ -31,7 +31,7 @@ export default {
     },
 
     methods: {
-        async getFundList () {
+        async getFund () {
             console.log('inside getFundList')
 
             await this.$store.dispatch('fund/getFund', this.fundId);
@@ -39,8 +39,8 @@ export default {
     },
 
     computed: {
-        list () {
-            return this.$store.state.fund.list;
+        fund () {
+            return this.$store.state.fund.fund;
         },
     }
 }
