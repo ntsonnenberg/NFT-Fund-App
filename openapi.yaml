@@ -43,38 +43,33 @@ paths:
     parameters:
       - $ref: "#/components/parameters/PathAccountId"
     x-controller: accounts
-  get:
-    x-operation: getAccount
-    tags:
-      - Accounts
-    security:
-      - cookieAuth: []
-    summary: Get an account
-    parameters:
-      - name: username
-        in: query
-        schema:
-          type: string
-      - name: password
-        in: query
-        schema:
-          type: string
-          format: password
-      - name: isManager
-        in: query
-        schema:
-          type: boolean
-    responses:
-      200:
-        description: Success
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Account"
-      400:
-        description: Invalid request.
-      401:
-        description: Not authenticated.
+    get:
+      x-operation: getAccount
+      tags:
+        - Accounts
+      security:
+        - cookieAuth: []
+      summary: Get an account
+      parameters:
+        - name: username
+          in: query
+          schema:
+            type: string
+        - name: isManager
+          in: query
+          schema:
+            type: boolean
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Account"
+        400:
+          description: Invalid request.
+        401:
+          description: Not authenticated.
   /accounts/{username}:
     parameters:
       - $ref: "#/components/parameters/PathUsername"

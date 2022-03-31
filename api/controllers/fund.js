@@ -41,6 +41,8 @@ module.exports = function (pool) {
 
       const [fund, capital] = await funds.getFund(client, fundId);
 
+      console.log(capital);
+
       if (fund && capital) {
         res
           .set("location", "/api/funds/ + " + fund.fundId)
@@ -51,7 +53,12 @@ module.exports = function (pool) {
             description: fund.description,
             ownerId: fund.owner_id,
             memberIds: fund.members,
-            capital: capital,
+            capital: {
+              ETH: capital.eth,
+              SOL: capital.sol,
+              AVAX: capital.avax,
+              XRP: capital.xrp,
+            },
           });
       } else {
         res.enforcer.status(400).send();

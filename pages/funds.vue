@@ -1,14 +1,18 @@
 <template>
     <v-layout>
         <div class="pt-5">
-            <h1>This is the funds page</h1>
-            <fund-card @view="showFundName" />
+            <h1>View Funds</h1>
+            <div class="fund-cards pl-10 pt-10" v-for="fund in list" :key="fund.fundId">
+                <fund-card :fund="fund"/>
+            </div>
+
         </div>
     </v-layout>
 </template>
 
 <script>
 import FundCard from '@/components/FundCard.vue'
+
 export default {
     name: 'FundsPage',
 
@@ -17,8 +21,12 @@ export default {
     },
 
     methods: {
-    showFundName (event) {
-        alert("This fund is named: " + event);
+
+    },
+
+    computed: {
+        list () {
+            return this.$store.fund.list;
         }
     }
 }
