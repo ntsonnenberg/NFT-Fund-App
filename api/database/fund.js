@@ -62,6 +62,15 @@ exports.createFund = async function (
   }
 };
 
+exports.getFunds = async function (client) {
+  const { rows } = await client.query({
+    name: "get-all-funds",
+    text: "SELECT fund_id FROM funds",
+  });
+
+  return rows;
+};
+
 exports.getFund = async function (client, fundId) {
   const { rows: fundRow } = await client.query({
     name: "get-fund-by-id",

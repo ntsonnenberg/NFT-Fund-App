@@ -196,6 +196,24 @@ paths:
           description: Invalid request.
         401:
           description: Not authenticated.
+    get:
+      x-operation: getFunds
+      tags:
+        - Funds
+      security:
+        - cookieAuth: []
+      summary: Get funds
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Funds"
+        400:
+          description: Invalid request.
+        401:
+          description: Not authenticated.
   /funds/{fundId}:
     parameters:
       - $ref: "#/components/parameters/PathFundId"
@@ -383,7 +401,7 @@ components:
     Fund:
       type: object
       properties:
-        FundId:
+        fundId:
           type: integer
           readOnly: true
         title:
@@ -407,3 +425,7 @@ components:
               type: integer
             XRP:
               type: integer
+    Funds:
+      type: array
+      items:
+        type: integer

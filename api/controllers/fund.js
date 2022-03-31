@@ -35,6 +35,24 @@ module.exports = function (pool) {
       }
     },
 
+    async getFunds(req, res) {
+      const client = await pool.connect();
+
+      const fundIdArray = await funds.getFunds(client);
+
+      const fundIds = [];
+
+      fundIdArray.forEach((fund) => {
+        fundIds.push(fund.fund_id);
+      });
+
+      if (fundIds) {
+        res.enforcer.status(200).send(fundIds);
+      } else {
+        res.enforcer.status(400);
+      }
+    },
+
     async getFund(req, res) {
       const fundId = req.enforcer.params.fundId;
       const client = await pool.connect();
