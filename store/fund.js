@@ -1,5 +1,3 @@
-import { Passport } from "passport/lib";
-
 export const state = function () {
   return {
     fund: {},

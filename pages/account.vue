@@ -1,26 +1,23 @@
 <template>
-<v-layout>
-    <div>
-        <h1>Hello {{ user }}!</h1>
-        <div class="py-10 pl-10">
-            <div>
-                <v-btn color="success" @click="hiddenUsername = !hiddenUsername">Change Username</v-btn>
-                <div v-show="!hiddenUsername">
-                    <v-text-field value="username" v-model="username" placeholder="username"></v-text-field>
+    <v-layout>
+        <div>
+            <h1>Hello {{ user }}!</h1>
+            <div class="py-10 pl-10">
+                <div>
+                    <v-btn color="success" @click="hidden = !hidden">Change Username</v-btn>
+                    <div v-show="!hidden">
+                        <v-text-field value="username" v-model="username" placeholder="username"></v-text-field>
+                    </div>
                 </div>
-            </div>
-            <div class="py-5">
-                <v-btn color="success" @click="hiddenPassword = !hiddenPassword">Change Password</v-btn>
-                <div v-show="!hiddenPassword">
-                    <v-text-field value="password" v-model="password" placeholder="password"></v-text-field>
+                <div v-if="username !== ''">
+                    <v-btn @click="changeUser()">Update</v-btn>
                 </div>
-            </div>
-            <div v-if="username !== '' || password !== ''">
-                <v-btn @click="changeUser()">Update</v-btn>
             </div>
         </div>
-    </div>
-</v-layout>
+        <div v-if="user !== ''">
+            <h1>Create a Fund</h1>
+        </div>
+    </v-layout>
 </template>
 
 <script>
@@ -29,19 +26,15 @@ export default {
 
     data () {
         return {
-            hiddenUsername: false,
-            hiddenPassword: false,
-            username: '',
-            password: ''
+            hidden: false,
+            username: ''
         }
     },
 
     methods: {
         async changeUser () {
             await this.$store.dispatch('accounts/updateUser', { 
-                username:this.username,
-                password: this.password,
-                isManager: false
+                username: this.username
             });
 
             alert("User updated successfully!")
@@ -61,5 +54,8 @@ export default {
 </script>
 
 <style scoped>
-
+    div.layout {
+        display: flex;
+        justify-content: space-between;
+    }
 </style>

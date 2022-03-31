@@ -45,8 +45,6 @@ module.exports = function (pool) {
             data
           );
 
-          console.log(updatedAccount);
-
           res.enforcer.status(200).send({
             accountId: updatedAccount.account_id,
             username: updatedAccount.username,
@@ -80,11 +78,9 @@ module.exports = function (pool) {
           values: [account.account_id],
         });
 
-        const fundId = rows[0].fund_id;
-
         if (account === undefined) {
           res.enforcer.status(204).send();
-        } else if (account.account_id !== req.user.id || fundId !== undefined) {
+        } else if (account.account_id !== req.user.id || rows === []) {
           res.enforcer.status(403).send();
         } else {
           await accounts.deleteAccount(client, account.account_id);
@@ -99,6 +95,24 @@ module.exports = function (pool) {
         throw e;
       } finally {
         client.release();
+      }
+    },
+
+    async getAccounts(req, res) {
+      const client = await pool.connect();
+      const accountIdArray = await accounts.getAccounts(client);
+      const accountIds = [];
+
+      accountIdArray.forEach((account) => {
+        accountIds.push(account.account_id);
+      });
+
+      console.log(accountIds);
+
+      if (accountIds) {
+        res.enforcer.status(200).send(accountIds);
+      } else {
+        res.enforcer.status(400);
       }
     },
 

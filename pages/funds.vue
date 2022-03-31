@@ -1,11 +1,9 @@
 <template>
-    <v-layout>
+    <v-layout @load="displayFund()">
         <h1>View Funds</h1>
-        <div class="funds">
-            <div class="fund-cards pl-10 pt-10" v-for="fund in list" :key="fund.fundId">
-                <fund-card :fund="fund"/>
-            </div>
-        </div>
+        <v-container v-for="fund in list" :key="fund.fundId">
+            <fund-card :fund="fund"/>
+        </v-container>
     </v-layout>
 </template>
 
@@ -22,7 +20,7 @@ export default {
     },
 
     mounted() {
-        this.displayFunds();
+        this.addFunds();
     },
 
     components: { 
@@ -48,8 +46,5 @@ export default {
 </script>
 
 <style>
-    div.fund-cards {
-        display: flex;
 
-    }
 </style>

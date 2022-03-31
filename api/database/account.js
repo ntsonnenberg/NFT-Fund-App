@@ -15,6 +15,15 @@ exports.createAccount = async function (client, username, password, isManager) {
   return rowCount > 0 ? accountId : undefined;
 };
 
+exports.getAccounts = async function (client) {
+  const { rows } = await client.query({
+    name: "get-all-account-ids",
+    text: "SELECT account_id FROM accounts",
+  });
+
+  return rows;
+};
+
 exports.getAccount = async function (client, accountId) {
   const { rows } = await client.query({
     name: "get-acount-by-id",
@@ -36,40 +45,12 @@ exports.getAccountByUsername = async function (client, username) {
 };
 
 exports.updateAccount = async function (client, accountId, data) {
-  const { username, password, isManager } = data;
-  const values = [];
-  const sets = [];
-
-  if (username !== undefined) {
-    values.push(username);
-    sets.push("username=$" + values.length);
-  }
-
-  if (password !== undefined) {
-    values.push(await encryptPassword(password));
-    sets.push("password=$" + values.length);
-  }
-
-  if (isManager !== undefined) {
-    values.push(isManager);
-    sets.push("is_manager=$" + values.length);
-  }
-
-  if (values.length === 0) {
-    return await exports.getAccount(client, accountId);
-  }
-
-  values.push(accountId);
+  const { username } = data;
 
   const { rows } = await client.query({
     name: "update-account",
-    text:
-      "UPDATE accounts SET  " +
-      sets.join(", ") +
-      " WHERE account_id=$" +
-      values.length +
-      " RETURNING *",
-    values,
+    text: "UPDATE accounts SET username = $1 WHERE account_id=$2 RETURNING *",
+    values: [username, accountId],
   });
 
   return rows[0];

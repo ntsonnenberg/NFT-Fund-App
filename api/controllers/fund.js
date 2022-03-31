@@ -37,9 +37,7 @@ module.exports = function (pool) {
 
     async getFunds(req, res) {
       const client = await pool.connect();
-
       const fundIdArray = await funds.getFunds(client);
-
       const fundIds = [];
 
       fundIdArray.forEach((fund) => {

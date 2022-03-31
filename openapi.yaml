@@ -39,6 +39,24 @@ paths:
           description: Invalid request.
         409:
           description: Account already exists.
+    get:
+      x-operation: getAccounts
+      tags:
+        - Accounts
+      security:
+        - cookieAuth: []
+      summary: Get accounts
+      responses:
+        200:
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Accounts"
+        400:
+          description: Invalid request.
+        401:
+          description: Not authenticated.
   /accounts/{accountId}:
     parameters:
       - $ref: "#/components/parameters/PathAccountId"
@@ -90,7 +108,7 @@ paths:
           description: Not authenticated.
         403:
           description: Access denied.
-    put:
+    patch:
       x-operation: updateAccount
       tags:
         - Accounts
@@ -106,15 +124,8 @@ paths:
               properties:
                 username:
                   type: string
-                password:
-                  type: string
-                  format: password
-                isManager:
-                  type: boolean
             example:
               username: username
-              password: password-here
-              isManager: false
       responses:
         200:
           description: Success
@@ -426,6 +437,10 @@ components:
             XRP:
               type: integer
     Funds:
+      type: array
+      items:
+        type: integer
+    Accounts:
       type: array
       items:
         type: integer
