@@ -1,12 +1,10 @@
 <template>
-  <v-layout>
+  <v-layout @load="displayList()">
     <h1>View Users</h1>
-    <v-data-table :headers="headers">
-    </v-data-table>
-    <div>
-      <v-btn @click="displayList()">Display List</v-btn>
+    <div class="pt-10">
+      <v-data-table :headers="headers" :items="accountList">
+      </v-data-table>
     </div>
-    <h1>{{ list }}</h1>
   </v-layout>
   
 </template>
@@ -17,11 +15,11 @@ export default {
 
   data () {
     return {
-      headers: [
-        'Username',
-        'Manager Status'
-      ]
     }
+  },
+
+  mounted () {
+    this.displayList()
   },
 
   methods: {
@@ -31,13 +29,34 @@ export default {
   },
 
   computed: {
-    list () {
-      return this.$store.state.accounts.list;
+    accountList () {
+      return this.$store.state.accounts.accountList;
+    },
+
+    headers () {
+      return [
+        {
+          text: "Account Id",
+          align: "start",
+          value: "accountId"
+        },
+        {
+          text: "Manager Status",
+          value: "isManager"
+        },
+        {
+          text: "Username",
+          value: "username"
+        }
+      ]
     }
   }
 }
 </script>
 
-<style>
-
+<style scoped>
+  div.layout {
+    display: flex;
+    flex-direction: column;
+  }
 </style>

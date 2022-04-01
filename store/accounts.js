@@ -13,6 +13,20 @@ export const mutations = {
   setAccountList(state, accountArray) {
     state.accountList = accountArray;
   },
+
+  addAccount(state, account) {
+    let accountInList = false;
+
+    state.accountList.forEach((user) => {
+      if (user.accountId === account.accountId) {
+        accountInList = true;
+      }
+    });
+
+    if (!accountInList) {
+      state.accountList.push(account);
+    }
+  },
 };
 
 export const actions = {
@@ -58,18 +72,24 @@ export const actions = {
   },
 
   async listInit({ commit, state }) {
-    const accountList = [];
+    console.log("inside listInit");
+
+    let accountArray = [];
     const accountIds = (await this.$axios.get(`api/accounts`)).data;
 
     accountIds.forEach(async (id) => {
-      const account = await this.$axios.get(`api/accounts/${id}`);
+      const res = await this.$axios.get(`api/accounts/${id}`);
 
-      console.log(account.data);
+      const account = {
+        accountId: res.data.accountId,
+        username: res.data.username,
+        isManager: res.data.isManager,
+      };
 
-      accountList.push(account.data);
+      console.log(account);
+
+      commit("addAccount", account);
     });
-
-    commit("setAccountList", accountList);
   },
 };
 
