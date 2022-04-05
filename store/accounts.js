@@ -10,15 +10,11 @@ export const mutations = {
     state.user = user;
   },
 
-  setAccountList(state, accountArray) {
-    state.accountList = accountArray;
-  },
-
   addAccount(state, account) {
     let accountInList = false;
 
     state.accountList.forEach((user) => {
-      if (user.accountId === account.accountId) {
+      if (user.account_id === account.account_id) {
         accountInList = true;
       }
     });
@@ -42,7 +38,11 @@ export const actions = {
   },
 
   async logout({ commit }) {
+    console.log("inside logout");
+
     const res = await this.$axios.put("api/authentication/logout");
+
+    console.log(res);
 
     if (res.status === 200) {
       commit("setUser", null);
@@ -71,24 +71,25 @@ export const actions = {
     }
   },
 
+  async deleteUser({ commit, state }) {
+    const res = await this.$axios.delete(`api/accounts/${state.user}`);
+
+    if (res.status === 200) {
+      commit("setUser", null);
+    }
+  },
+
   async listInit({ commit, state }) {
     console.log("inside listInit");
 
-    let accountArray = [];
-    const accountIds = (await this.$axios.get(`api/accounts`)).data;
+    const res = await this.$axios.get("api/accounts");
 
-    accountIds.forEach(async (id) => {
-      const res = await this.$axios.get(`api/accounts/${id}`);
+    console.log(res.data);
 
-      const account = {
-        accountId: res.data.accountId,
-        username: res.data.username,
-        isManager: res.data.isManager,
-      };
-
-      console.log(account);
-
-      commit("addAccount", account);
+    res.data.forEach(async (account) => {
+      if (res.status === 200) {
+        commit("addAccount", account);
+      }
     });
   },
 };

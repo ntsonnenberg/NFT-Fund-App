@@ -100,17 +100,11 @@ module.exports = function (pool) {
 
     async getAccounts(req, res) {
       const client = await pool.connect();
-      const accountIdArray = await accounts.getAccounts(client);
-      const accountIds = [];
 
-      accountIdArray.forEach((account) => {
-        accountIds.push(account.account_id);
-      });
+      const allAccounts = await accounts.getAccounts(client);
 
-      console.log(accountIds);
-
-      if (accountIds) {
-        res.enforcer.status(200).send(accountIds);
+      if (allAccounts) {
+        res.enforcer.status(200).send(allAccounts);
       } else {
         res.enforcer.status(400);
       }

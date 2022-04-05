@@ -1,12 +1,13 @@
 <template>
-  <v-layout @load="displayList()">
-    <h1>View Users</h1>
-    <div class="pt-10">
-      <v-data-table :headers="headers" :items="accountList">
-      </v-data-table>
-    </div>
-  </v-layout>
-  
+  <div v-if="user !== null">
+    <v-layout @load="displayList()">
+      <h1>View Users</h1>
+      <div class="pt-10">
+        <v-data-table :headers="headers" :items="accountList">
+        </v-data-table>
+      </div>
+    </v-layout>
+  </div>
 </template>
 
 <script>
@@ -33,16 +34,20 @@ export default {
       return this.$store.state.accounts.accountList;
     },
 
+    user () {
+      return this.$store.state.accounts.user;
+    },
+
     headers () {
       return [
         {
           text: "Account Id",
           align: "start",
-          value: "accountId"
+          value: "account_id"
         },
         {
           text: "Manager Status",
-          value: "isManager"
+          value: "is_manager"
         },
         {
           text: "Username",

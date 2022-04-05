@@ -1,7 +1,7 @@
 export const state = function () {
   return {
     fund: {},
-    list: [],
+    fundList: [],
   };
 };
 
@@ -10,76 +10,81 @@ export const mutations = {
     state.fund = fund;
   },
 
-  add(state, fund) {
-    state.list.forEach((item) => {
-      if (item.fund.fundId === fund.fundId) {
-        return;
+  addFund(state, fund) {
+    let fundInList = false;
+
+    state.fundList.forEach((nftFund) => {
+      if (nftFund.fundId === fund.fundId) {
+        fundInList = true;
       }
     });
 
-    state.list.push({
-      fund,
-      done: false,
-    });
-  },
-
-  remove(state, { fund }) {
-    state.list.splice(state.list.indexOf(fund), 1);
+    if (!fundInList) {
+      state.fundList.push(fund);
+    }
   },
 };
 
 export const actions = {
-  async getFund({ commit, state }, fundId) {
-    console.log("inside getFund");
-    const res = await this.$axios.get(`api/funds/${fundId}`);
+  async fundListInit({ commit, state }) {
+    console.log("inside fundListInit");
 
-    const owner = (await this.$axios.get(`api/accounts/${res.data.ownerId}`))
-      .data.username;
-
-    const fund = {
-      fundId: res.data.FundId,
-      title: res.data.title,
-      description: res.data.description,
-      ownerName: owner,
-      memberIds: res.data.memberIds,
-      capital: {
-        ETH: res.data.capital.eth,
-        SOL: res.data.capital.sol,
-        AVAX: res.data.capital.avax,
-        XRP: res.data.capital.xrp,
-      },
-    };
-
-    if (res.status === 200) {
-      commit("add", fund);
-    }
-  },
-
-  async modifyList({ commit, state }) {
-    const res = await this.$axios.get(`api/funds`);
-    const fundIds = res.data;
+    let fundArray = [];
+    const fundIds = (await this.$axios.get("api/funds")).data;
 
     fundIds.forEach(async (id) => {
-      const fund = await this.$axios.get(`api/funds/${id}`);
-      const owner = (await this.$axios.get(`api/accounts/${fund.data.ownerId}`))
+      const res = await this.$axios.get(`api/funds/${id}`);
+      const owner = (await this.$axios.get(`api/accounts/${res.data.ownerId}`))
         .data.username;
 
-      const fundToAdd = {
-        FundId: fund.data.FundId,
-        title: fund.data.title,
-        description: fund.data.description,
+      const fund = {
+        fundId: res.data.FundId,
+        title: res.data.title,
+        description: res.data.description,
         ownerName: owner,
-        memberIds: fund.data.memberIds,
-        capital: {
-          ETH: fund.data.capital.eth,
-          SOL: fund.data.capital.sol,
-          AVAX: fund.data.capital.avax,
-          XRP: fund.data.capital.xrp,
-        },
+        memberIds: res.data.memberIds,
+        captial: res.data.capital,
       };
 
       if (res.status === 200) {
-        commit("add", fundToAdd);
+        commit("addFund", fund);
+      }
+    });
+  },
+
+  async createFund(
+    { commit, state },
+    { title, description, eth, avax, sol, xrp, owner }
+  ) {
+    console.log("inside createFund");
+
+    const accountIds = (await this.$axios.get("api/accounts")).data;
+
+    accountIds.forEach(async (id) => {
+      const account = (await this.$axios.get(`api/accounts/${id}`)).data;
+
+      if (account.username === owner) {
+        const fund = {
+          title: title,
+          description: description,
+          ownerId: account.accountId,
+          memberIds: [],
+          capital: {
+            ETH: eth,
+            SOL: sol,
+            AVAX: avax,
+            XRP: xrp,
+          },
+        };
+
+        const res = await this.$axios.post("api/funds", fund);
+
+        console.log(res);
+
+        if (res.status === 201) {
+          commit("setFund", res.data);
+          commit("addFund", res.data);
+        }
       }
     });
   },

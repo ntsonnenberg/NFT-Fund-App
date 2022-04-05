@@ -37,12 +37,14 @@
       return {
         username: '',
         password: '',
-        isManager: null
+        isManager: false
       }
     },
 
     methods: {
       async signup () {
+
+        console.log('inside signup method')
         console.log(this.isManager);
 
         await this.$store.dispatch('accounts/signup', {

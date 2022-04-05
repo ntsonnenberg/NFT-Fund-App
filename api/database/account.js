@@ -18,7 +18,7 @@ exports.createAccount = async function (client, username, password, isManager) {
 exports.getAccounts = async function (client) {
   const { rows } = await client.query({
     name: "get-all-account-ids",
-    text: "SELECT account_id FROM accounts",
+    text: "SELECT account_id, username, is_manager FROM accounts",
   });
 
   return rows;

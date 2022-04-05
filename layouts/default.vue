@@ -75,6 +75,7 @@
 
     methods: {
       logout () {
+        console.log("inside logout method")
         this.$store.dispatch('accounts/logout');
       }
     },

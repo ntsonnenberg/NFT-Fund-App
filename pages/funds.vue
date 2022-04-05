@@ -1,9 +1,13 @@
 <template>
-    <v-layout @load="displayFund()">
-        <h1>View Funds</h1>
-        <v-container v-for="fund in list" :key="fund.fundId">
-            <fund-card :fund="fund"/>
-        </v-container>
+    <v-layout @load="displayFunds()">
+        <div width="30em">
+            <h1>View Funds</h1>
+            <div class="fund-container">
+                <v-container v-for="fund in fundList" :key="fund.fundId">
+                    <fund-card :fund="fund"/>
+                </v-container>
+            </div>
+        </div>
     </v-layout>
 </template>
 
@@ -20,7 +24,7 @@ export default {
     },
 
     mounted() {
-        this.addFunds();
+        this.displayFunds();
     },
 
     components: { 
@@ -29,13 +33,13 @@ export default {
 
     methods: {
         async displayFunds () {
-            await this.$store.dispatch('fund/modifyList');
+            await this.$store.dispatch('fund/fundListInit');
         }
     },
 
     computed: {
-        list () {
-            return this.$store.state.fund.list;
+        fundList () {
+            return this.$store.state.fund.fundList;
         },
 
         fund () {
@@ -45,6 +49,9 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+    div.fund-container {
+        display: flex;
+        flex-direction: row;
+    }
 </style>

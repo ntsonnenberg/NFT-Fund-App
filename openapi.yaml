@@ -52,7 +52,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Accounts"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Account"
         400:
           description: Invalid request.
         401:
@@ -177,8 +179,6 @@ paths:
       x-operation: logout
       tags:
         - Authentication
-      security:
-        - cookieAuth: []
       summary: Log out
       responses:
         200:
@@ -220,7 +220,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Funds"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Fund"
         400:
           description: Invalid request.
         401:
@@ -402,7 +404,7 @@ components:
     Account:
       type: object
       properties:
-        AccountId:
+        accountId:
           type: integer
           readOnly: true
         username:
@@ -419,12 +421,12 @@ components:
           type: string
         description:
           type: string
-        ownerId:
-          type: integer
-        memberIds:
+        owner:
+          type: string
+        members:
           type: array
           items:
-            type: integer
+            type: string
         capital:
           type: object
           properties:
@@ -436,11 +438,3 @@ components:
               type: integer
             XRP:
               type: integer
-    Funds:
-      type: array
-      items:
-        type: integer
-    Accounts:
-      type: array
-      items:
-        type: integer
