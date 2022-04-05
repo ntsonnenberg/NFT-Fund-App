@@ -27,7 +27,7 @@ exports.getAccounts = async function (client) {
 exports.getAccount = async function (client, accountId) {
   const { rows } = await client.query({
     name: "get-acount-by-id",
-    text: "SELECT * FROM accounts WHERE account_id=$1",
+    text: "SELECT account_id, username, is_manager FROM accounts WHERE account_id=$1",
     values: [accountId],
   });
 

@@ -65,7 +65,7 @@ exports.createFund = async function (
 exports.getFunds = async function (client) {
   const { rows } = await client.query({
     name: "get-all-funds",
-    text: "SELECT fund_id FROM funds",
+    text: "SELECT * FROM funds",
   });
 
   return rows;
@@ -85,6 +85,16 @@ exports.getFund = async function (client, fundId) {
   });
 
   return [fundRow[0], capitalRow[0]];
+};
+
+exports.getCapital = async function (client, capitalId) {
+  const { rows } = await client.query({
+    name: "get-capital-from-fund",
+    text: "SELECT * FROM capitals WHERE capital_id=$1",
+    values: [capitalId],
+  });
+
+  return rows[0];
 };
 
 exports.updateFund = async function (client, fund, newData) {

@@ -38,8 +38,6 @@ export const actions = {
   },
 
   async logout({ commit }) {
-    console.log("inside logout");
-
     const res = await this.$axios.put("api/authentication/logout");
 
     console.log(res);
@@ -83,8 +81,6 @@ export const actions = {
     console.log("inside listInit");
 
     const res = await this.$axios.get("api/accounts");
-
-    console.log(res.data);
 
     res.data.forEach(async (account) => {
       if (res.status === 200) {

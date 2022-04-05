@@ -37,15 +37,46 @@ module.exports = function (pool) {
 
     async getFunds(req, res) {
       const client = await pool.connect();
-      const fundIdArray = await funds.getFunds(client);
-      const fundIds = [];
+      const allFunds = await funds.getFunds(client);
 
-      fundIdArray.forEach((fund) => {
-        fundIds.push(fund.fund_id);
-      });
+      for (let rep = 0; rep < allFunds.length; rep++) {
+        const owner = await accounts.getAccount(client, allFunds[rep].owner_id);
 
-      if (fundIds) {
-        res.enforcer.status(200).send(fundIds);
+        allFunds[rep].owner = owner.username;
+        delete allFunds[rep].owner_id;
+
+        allFunds[rep].memberNames = [];
+
+        const members = allFunds[rep].members;
+
+        for (let i = 0; i < members.length; i++) {
+          const account = await accounts.getAccount(client, members[i]);
+
+          allFunds[rep].memberNames.push(account.username);
+        }
+
+        delete allFunds[rep].members;
+
+        const capital = await funds.getCapital(
+          client,
+          allFunds[rep].capital_id
+        );
+
+        allFunds[rep].capital = {
+          ETH: capital.eth,
+          SOL: capital.sol,
+          AVAX: capital.avax,
+          XRP: capital.xrp,
+        };
+
+        delete allFunds[rep].capital_id;
+
+        allFunds[rep].fundId = allFunds[rep].fund_id;
+        delete allFunds[rep].fund_id;
+      }
+
+      if (allFunds) {
+        res.enforcer.status(200).send(allFunds);
       } else {
         res.enforcer.status(400);
       }

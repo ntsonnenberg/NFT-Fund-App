@@ -423,7 +423,7 @@ components:
           type: string
         owner:
           type: string
-        members:
+        memberNames:
           type: array
           items:
             type: string
