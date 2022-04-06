@@ -18,16 +18,26 @@ module.exports = function (pool) {
         capital
       );
 
+      const owner = await accounts.getAccount(client, ids.ownerId);
+
+      let memberArray = [];
+
+      for (let rep = 0; rep < memberIds.length; rep++) {
+        const member = await accounts.getAccount(client, memberIds[rep]);
+
+        memberArray.push(member.username);
+      }
+
       if (ids) {
         res
           .set("location", "/api/funds/ + " + ids.fundId)
           .enforcer.status(201)
           .send({
-            FundId: ids.fundId,
+            fundId: ids.fundId,
             title: title,
             description: description,
-            ownerId: ownerId,
-            memberIds: memberIds,
+            owner: owner.username,
+            memberNames: memberArray,
             capital: capital,
           });
       } else {

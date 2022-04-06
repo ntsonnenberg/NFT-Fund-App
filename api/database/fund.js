@@ -49,7 +49,7 @@ exports.createFund = async function (
       await client.query("COMMIT");
 
       return rowCapitalCount > 0 && rowFundCount > 0
-        ? { fundId: fundId, capitalId: capitalId }
+        ? { fundId: fundId, capitalId: capitalId, ownerId: rows[0].account_id }
         : undefined;
     } else {
       return undefined;

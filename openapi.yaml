@@ -394,7 +394,29 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/schemas/Fund"
+            type: object
+            properties:
+              title:
+                type: string
+              description:
+                type: string
+              ownerId:
+                type: integer
+              memberIds:
+                type: array
+                items:
+                  type: integer
+              capital:
+                type: object
+                properties:
+                  ETH:
+                    type: integer
+                  SOL:
+                    type: integer
+                  AVAX:
+                    type: integer
+                  XRP:
+                    type: integer
   securitySchemes:
     cookieAuth:
       type: apiKey
