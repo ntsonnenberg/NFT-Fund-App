@@ -42,38 +42,36 @@ export const actions = {
 
   async createFund(
     { commit, state },
-    { title, description, eth, avax, sol, xrp, owner }
+    { title, description, eth, avax, sol, xrp, ownerId }
   ) {
     console.log("inside createFund");
 
-    // const accountIds = (await this.$axios.get("api/accounts")).data;
+    const res = await this.$axios.post("api/funds", {
+      title: title,
+      description: description,
+      ownerId: ownerId,
+      memberIds: [ownerId],
+      capital: {
+        ETH: eth,
+        SOL: sol,
+        AVAX: avax,
+        XRP: xrp,
+      },
+    });
 
-    // accountIds.forEach(async (id) => {
-    //   const account = (await this.$axios.get(`api/accounts/${id}`)).data;
+    if (res.status === 201) {
+      commit("addFund", res.data);
+    }
+  },
 
-    //   if (account.username === owner) {
-    //     const fund = {
-    //       title: title,
-    //       description: description,
-    //       ownerId: account.accountId,
-    //       memberIds: [],
-    //       capital: {
-    //         ETH: eth,
-    //         SOL: sol,
-    //         AVAX: avax,
-    //         XRP: xrp,
-    //       },
-    //     };
+  async getOwner({ commit, state }, user) {
+    const ownerId = 0;
+    const accounts = (await this.$axios.get("api/accounts")).data;
 
-    //     const res = await this.$axios.post("api/funds", fund);
-
-    //     console.log(res);
-
-    //     if (res.status === 201) {
-    //       commit("setFund", res.data);
-    //       commit("addFund", res.data);
-    //     }
-    //   }
-    // });
+    for (let rep = 0; rep < accounts.length; rep++) {
+      if (accounts[rep].username === user) {
+        return accounts[rep].account_id;
+      }
+    }
   },
 };

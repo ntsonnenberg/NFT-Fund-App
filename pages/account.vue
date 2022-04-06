@@ -1,5 +1,5 @@
 <template>
-    <v-layout>
+    <v-layout @load="displayFunds()">
         <div>
             <h1>Hello {{ user }}!</h1>
             <div class="py-10 pl-10">
@@ -20,9 +20,12 @@
                 <h1>My Funds</h1>
                 <div>
                     <v-container v-for="fund in fundList" :key="fund.fundId">
-                        <fund-card :fund="fund" v-if="fund.ownerName === user" />
+                        <fund-card :fund="fund" v-if="fund.owner === user" />
                     </v-container>
                 </div>
+            </div>
+            <div>
+                <h1>My Investments</h1>
             </div>
         </div>
         <div v-if="user !== ''">
@@ -90,7 +93,13 @@ export default {
             }
         },
 
+        async displayFunds () {
+            await this.$store.dispatch('fund/fundListInit');
+        },
+
         async createFund () {
+            const ownerId = await this.$store.dispatch('fund/getOwner', this.$store.state.accounts.user);
+
             await this.$store.dispatch('fund/createFund', {
                 title: this.title,
                 description: this.description,
@@ -98,7 +107,7 @@ export default {
                 avax: this.avax, 
                 sol: this.sol,
                 xrp: this.xrp,
-                owner: this.$store.state.accounts.user
+                ownerId: ownerId
             });
 
             alert("Fund created successfully!")

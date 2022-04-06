@@ -2,9 +2,21 @@
   <div v-if="user !== null">
     <v-layout @load="displayList()">
       <h1>View Users</h1>
-      <div class="pt-10">
-        <v-data-table :headers="headers" :items="accountList">
-        </v-data-table>
+      <div class="account-table pt-10 pl-10">
+        <v-simple-table>
+          <thead>
+            <tr>
+              <th>Username</th>
+              <th>Manager Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="account in accountList" :key="account.username">
+              <td>{{ account.username }}</td>
+              <td>{{ account.is_manager }}</td>
+            </tr>
+          </tbody>
+        </v-simple-table>
       </div>
     </v-layout>
   </div>
@@ -37,24 +49,6 @@ export default {
     user () {
       return this.$store.state.accounts.user;
     },
-
-    headers () {
-      return [
-        {
-          text: "Account Id",
-          align: "start",
-          value: "account_id"
-        },
-        {
-          text: "Manager Status",
-          value: "is_manager"
-        },
-        {
-          text: "Username",
-          value: "username"
-        }
-      ]
-    }
   }
 }
 </script>
@@ -63,5 +57,9 @@ export default {
   div.layout {
     display: flex;
     flex-direction: column;
+  }
+
+  div.v-data-table.theme--dark {
+    width: 25%
   }
 </style>

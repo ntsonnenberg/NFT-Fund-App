@@ -126,5 +126,24 @@ module.exports = function (pool) {
         res.enforcer.status(400).send();
       }
     },
+
+    async getAccountByUsername(req, res) {
+      const { username } = req.enforecer.params;
+      const client = await pool.connect();
+
+      let account = await accounts.getAccountByUsername(client, username);
+
+      console.log(account);
+
+      if (account) {
+        res.enforcer.status(200).send({
+          accountId: account.account_id,
+          username: account.username,
+          isManager: account.is_manager,
+        });
+      } else {
+        res.enforcer.status(400).send();
+      }
+    },
   };
 };
