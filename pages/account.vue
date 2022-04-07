@@ -26,6 +26,30 @@
             </div>
             <div>
                 <h1>My Investments</h1>
+                <div>
+                    <p>{{ fundListForMember }}</p>
+                    <p>{{ user }}</p>
+                    <!-- <v-simple-table>
+                        <thead>
+                            <tr>
+                                <th>Fund Title</th>
+                                <th>Ethereum Holdings</th>
+                                <th>Solana Holdings</th>
+                                <th>Avalanche Holdings</th>
+                                <th>Ripple Holdings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="fund in fundListForMember" :key="fund.fundId">
+                                <td>{{ fund.title }}</td>
+                                <td>{{ fund.capital.ETH }}</td>
+                                <td>{{ fund.capital.SOL }}</td>
+                                <td>{{ fund.capital.AVAX }}</td>
+                                <td>{{ fund.capital.XRP }}</td>
+                            </tr>
+                        </tbody>
+                    </v-simple-table> -->
+                </div>
             </div>
         </div>
         <div class="create-fund-container">
@@ -119,6 +143,8 @@ export default {
         },
 
         async createFund () {
+            this.overlay = false;
+
             const ownerId = await this.$store.dispatch('fund/getOwner', this.user);
 
             await this.$store.dispatch('fund/createFund', {
@@ -156,6 +182,18 @@ export default {
                     return false;
                 }
             });
+        },
+
+        fundListForMember () {
+            return this.$store.state.fund.fundList.filter((fund) => {
+                fund.memberNames.forEach(member => {
+                    if (member === this.user) {
+                        return true;
+                    }
+                })
+
+                return false;
+            })
         }
     }
 }

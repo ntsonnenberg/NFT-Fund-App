@@ -31,6 +31,24 @@ export const mutations = {
       }
     }
   },
+
+  addMemberToFund(state, { fundId, username }) {
+    let memberInFund = false;
+
+    state.fundList.forEach((fund) => {
+      if (fund.fundId === fundId) {
+        fund.memberNames.forEach((member) => {
+          if (member === username) {
+            memberInFund = true;
+          }
+        });
+
+        if (!memberInFund) {
+          fund.memberNames.push(username);
+        }
+      }
+    });
+  },
 };
 
 export const actions = {
@@ -52,8 +70,6 @@ export const actions = {
     { commit, state },
     { title, description, eth, avax, sol, xrp, ownerId }
   ) {
-    console.log("inside createFund");
-
     const res = await this.$axios.post("api/funds", {
       title: title,
       description: description,
@@ -81,7 +97,13 @@ export const actions = {
   },
 
   async addMember({ commit, state }, { fundId, username }) {
-    console.log("inside add member action", fundId, username);
+    const res = await this.$axios.put(
+      `api/funds/${fundId}/accounts/${username}/invite`
+    );
+
+    if (res.status === 200) {
+      commit("addMemberToFund", { fundId, username });
+    }
   },
 
   async getOwner({ commit, state }, user) {

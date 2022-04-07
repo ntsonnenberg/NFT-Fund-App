@@ -37,13 +37,14 @@ export default {
         },
 
         async addMember (fundId, username) {
-
-            console.log(fundId, username)
             await this.$store.dispatch('fund/addMember', {
                 fundId: fundId,
                 username: username
             });
+
+            alert("You were accepted into the fund!");
         }
+
     },
 
     computed: {
