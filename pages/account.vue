@@ -20,7 +20,7 @@
                 <div @load="displayFunds()">
                     <h1 v-if="fundList.length > 0">My Funds</h1>
                     <v-container v-for="fund in fundList" :key="fund.fundId">
-                        <fund-card :user="user" :fund="fund" />
+                        <fund-card :user="user" :fund="fund" @deleteFund="deleteFund(fund.fundId)"/>
                     </v-container>
                 </div>
             </div>
@@ -28,21 +28,37 @@
                 <h1>My Investments</h1>
             </div>
         </div>
-        <div>
-            <h1>Create a Fund</h1>
-            <v-form>
-                <v-container>
-                    <v-text-field v-model="title" label="Fund Title" required></v-text-field>
-                    <v-textarea v-model="description" label="Fund Description" required></v-textarea>
-                    <br>
-                    <label>Enter Initial Crypto Investment: </label>
-                    <v-text-field type="number" v-model="eth" label="ETH"></v-text-field>
-                    <v-text-field type="number" v-model="avax" label="AVAX"></v-text-field>
-                    <v-text-field type="number" v-model="sol" label="SOL"></v-text-field>
-                    <v-text-field type="number" v-model="xrp" label="XRP"></v-text-field>
-                </v-container>
-                <v-btn color="success" @click="createFund()">Create Fund</v-btn>
-            </v-form>
+        <div class="create-fund-container">
+            <v-btn text x-large @click="overlay = !overlay">Create Fund</v-btn>
+            <v-overlay :value="overlay">
+                <v-card width="50em" height="50em">
+                    <v-form>
+                        <v-container class="pl-10 pr-10">
+                            <div class="fund-title-input">
+                                <v-text-field v-model="title" label="Fund Title" required></v-text-field>
+                            </div>
+                            <div class="pt-10">
+                                <v-textarea v-model="description" label="Fund Description" required></v-textarea>
+                            </div>
+                            <div class="pt-10">
+                                <label>Enter Initial Crypto Investment: </label>
+                                <div class="fund-capital-input pl-10 pt-5">
+                                    <v-text-field type="number" v-model="eth" label="ETH"></v-text-field>
+                                    <v-text-field type="number" v-model="avax" label="AVAX"></v-text-field>
+                                    <v-text-field type="number" v-model="sol" label="SOL"></v-text-field>
+                                    <v-text-field type="number" v-model="xrp" label="XRP"></v-text-field>
+                                </div>
+                            </div>
+                            <div class="overlay-buttons pt-15">
+                                <div>
+                                    <v-btn color="success" @click="createFund()">Create Fund</v-btn>
+                                </div>
+                                <v-btn @click="overlay = false">Back</v-btn>
+                            </div>
+                        </v-container>
+                    </v-form>
+                </v-card>
+            </v-overlay>
         </div>
     </v-layout>
 </template>
@@ -63,6 +79,7 @@ export default {
             avax: 0,
             sol: 0,
             xrp: 0,
+            overlay: false
         }
     },
 
@@ -93,7 +110,7 @@ export default {
             alert("User deleted successfully!")
 
             if (this.user === null) {
-                this.$router.push("/");
+                this.$router.push("/account");
             }
         },
 
@@ -116,6 +133,14 @@ export default {
 
             alert("Fund created successfully!")
         },
+
+        async deleteFund (fundId) {
+            console.log('inside delete fund method', fundId);
+
+            await this.$store.dispatch('fund/deleteFund', fundId);
+
+            alert("Fund deleted successfully!")
+        }
     },
 
     computed: {
@@ -139,6 +164,29 @@ export default {
 <style scoped>
     div.layout {
         display: flex;
+        justify-content: space-between;
+    }
+
+    div.create-fund-container {
+        width: 40%;
+    }
+
+    button.v-btn.v-btn--text.theme--dark.v-size--x-large {
+        position: absolute;
+        right: 100px;
+    }
+
+    div.fund-title-input {
+        width: 20em;
+    }
+
+    div.fund-capital-input.pl-10.pt-5 {
+        width: 10em;
+    }
+
+    div.overlay-buttons {
+        display: flex;
+        flex-direction: row;
         justify-content: space-between;
     }
 </style>

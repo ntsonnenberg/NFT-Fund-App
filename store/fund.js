@@ -23,6 +23,14 @@ export const mutations = {
       state.fundList.push(fund);
     }
   },
+
+  removeFund(state, fundId) {
+    for (let rep = 0; rep < state.fundList.length; rep++) {
+      if (state.fundList[rep].fundId === fundId) {
+        state.fundList.splice(rep, 1);
+      }
+    }
+  },
 };
 
 export const actions = {
@@ -61,6 +69,14 @@ export const actions = {
 
     if (res.status === 201) {
       commit("addFund", res.data);
+    }
+  },
+
+  async deleteFund({ commit, state }, fundId) {
+    const res = await this.$axios.delete(`api/funds/${fundId}`);
+
+    if (res.status === 200) {
+      commit("removeFund", fundId);
     }
   },
 

@@ -8,11 +8,8 @@
             <v-btn text color="green" @click="overlay = !overlay">View Capital Holdings</v-btn>
         </v-card-actions>
         <div class="pl-2 pb-1">
-            <!-- <button v-if="user === fund.owner">
-                <img src="../img/delete_icon_red.png" width="30em" height="30em"/>
-            </button> -->
-            <v-btn elevation="2" icon small color="red" v-if="user === fund.owner">
-                <img src="../img/delete_icon_nuxt.png" width="26em" height="26em"/>
+            <v-btn elevation="2" icon small color="red" v-if="user === fund.owner" @click="deleteFund()">
+                <img src="../img/delete_icon_shadow.png" width="13em" height="13em"/>
             </v-btn>
         </div>
         <v-overlay :value="overlay">
@@ -46,6 +43,12 @@ export default {
         fund: Object,
         user: String
     },
+
+    methods: {
+        deleteFund() {
+            this.$emit("deleteFund", this.fund.fundId);
+        }
+    }
 }
 </script>
 
