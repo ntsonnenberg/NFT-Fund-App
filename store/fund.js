@@ -80,6 +80,10 @@ export const actions = {
     }
   },
 
+  async addMember({ commit, state }, { fundId, username }) {
+    console.log("inside add member action", fundId, username);
+  },
+
   async getOwner({ commit, state }, user) {
     const ownerId = 0;
     const accounts = (await this.$axios.get("api/accounts")).data;

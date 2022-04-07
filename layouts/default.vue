@@ -1,5 +1,5 @@
 <template>
-  <v-app dark>
+  <v-app dark >
     <v-app-bar
       :clipped-left="clipped"
       fixed
@@ -98,8 +98,29 @@
     height: 50px;
   }
 
-a {
-    text-decoration: none;
-    color: white !important;
+  a {
+      text-decoration: none;
+      color: white !important;
+  }
+</style>
+
+<style>
+  ::-webkit-scrollbar {
+    width: 15px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #202020;
+    border-left: 1px solid #2c2c2c;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #3e3e3e;
+    border: solid 3px #202020;
+    border-radius: 7px;;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: white;
   }
 </style>

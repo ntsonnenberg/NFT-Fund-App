@@ -4,7 +4,7 @@
         <v-card-subtitle>{{ fund.owner }}</v-card-subtitle>
         <v-card-text>{{ fund.description }}</v-card-text>
         <v-card-actions class="d-flex">
-            <v-btn text color="green">Request to Join</v-btn>
+            <v-btn text color="green" @click="joinFund()" v-if="user !== fund.owner">Request to Join</v-btn>
             <v-btn text color="green" @click="overlay = !overlay">View Capital Holdings</v-btn>
         </v-card-actions>
         <div class="pl-2 pb-1">
@@ -47,6 +47,10 @@ export default {
     methods: {
         deleteFund() {
             this.$emit("deleteFund", this.fund.fundId);
+        },
+
+        joinFund() {
+            this.$emit("joinFund", this.fund.fundId, this.user)
         }
     }
 }

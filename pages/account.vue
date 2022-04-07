@@ -31,7 +31,7 @@
         <div class="create-fund-container">
             <v-btn text x-large @click="overlay = !overlay">Create Fund</v-btn>
             <v-overlay :value="overlay">
-                <v-card width="50em" height="50em">
+                <v-card class="create-fund-card">
                     <v-form>
                         <v-container class="pl-10 pr-10">
                             <div class="fund-title-input">
@@ -188,5 +188,19 @@ export default {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+    }
+
+    .create-fund-card {
+        width: 50em;
+        height: 50em;
+        overflow-y: auto;
+    }
+
+    @media (max-width: 1536px) {
+        .create-fund-card {
+            width: 40em;
+            height: 40em;
+            overflow-y: auto
+        }
     }
 </style>
