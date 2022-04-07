@@ -12,7 +12,7 @@
 
             <div class="pt-5">
               <label for="password">password:</label>
-              <input id="password" v-model="password" placeholder="insert your password">
+              <input type="password" id="password" v-model="password" placeholder="insert your password">
             </div>
 
             <div class="d-flex">

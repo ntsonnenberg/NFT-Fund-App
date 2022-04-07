@@ -7,7 +7,14 @@
             <v-btn text color="green">Request to Join</v-btn>
             <v-btn text color="green" @click="overlay = !overlay">View Capital Holdings</v-btn>
         </v-card-actions>
-        <v-btn>Delete Fund</v-btn>
+        <div class="pl-2 pb-1">
+            <!-- <button v-if="user === fund.owner">
+                <img src="../img/delete_icon_red.png" width="30em" height="30em"/>
+            </button> -->
+            <v-btn elevation="2" icon small color="red" v-if="user === fund.owner">
+                <img src="../img/delete_icon_nuxt.png" width="26em" height="26em"/>
+            </v-btn>
+        </div>
         <v-overlay :value="overlay">
             <v-card width="30em" elevation="15">
                 <v-card-title class="d-flex justify-center">Capital Holdings</v-card-title>

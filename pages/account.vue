@@ -1,5 +1,5 @@
 <template>
-    <v-layout @load="displayFunds()">
+    <v-layout>
         <div>
             <h1>Hello {{ user }}!</h1>
             <div class="py-10 pl-10">
@@ -17,10 +17,10 @@
                 </div>
             </div>
             <div>
-                <h1>My Funds</h1>
-                <div>
+                <div @load="displayFunds()">
+                    <h1 v-if="fundList.length > 0">My Funds</h1>
                     <v-container v-for="fund in fundList" :key="fund.fundId">
-                        <fund-card :fund="fund" v-if="fund.owner === user" />
+                        <fund-card :user="user" :fund="fund" />
                     </v-container>
                 </div>
             </div>
@@ -28,7 +28,7 @@
                 <h1>My Investments</h1>
             </div>
         </div>
-        <div v-if="user !== ''">
+        <div>
             <h1>Create a Fund</h1>
             <v-form>
                 <v-container>
@@ -66,6 +66,10 @@ export default {
         }
     },
 
+    mounted() {
+        this.displayFunds();
+    },
+
     components: {
         FundCard
     },
@@ -98,7 +102,7 @@ export default {
         },
 
         async createFund () {
-            const ownerId = await this.$store.dispatch('fund/getOwner', this.$store.state.accounts.user);
+            const ownerId = await this.$store.dispatch('fund/getOwner', this.user);
 
             await this.$store.dispatch('fund/createFund', {
                 title: this.title,
@@ -111,7 +115,7 @@ export default {
             });
 
             alert("Fund created successfully!")
-        }
+        },
     },
 
     computed: {
@@ -120,7 +124,13 @@ export default {
         },
 
         fundList () {
-            return this.$store.state.fund.fundList;
+            return this.$store.state.fund.fundList.filter((fund) => {
+                if (fund.owner === this.user) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
         }
     }
 }

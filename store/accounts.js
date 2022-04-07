@@ -1,6 +1,7 @@
 export const state = function () {
   return {
     user: getUserFromCookie(),
+    isManager: false,
     accountList: [],
   };
 };
@@ -8,6 +9,10 @@ export const state = function () {
 export const mutations = {
   setUser(state, user) {
     state.user = user;
+  },
+
+  setManagerStatus(state, isManager) {
+    state.isManager = isManager;
   },
 
   addAccount(state, account) {
@@ -32,8 +37,6 @@ export const actions = {
       password,
     });
 
-    console.log(res);
-
     if (res.status === 200) {
       commit("setUser", getUserFromCookie());
     }
@@ -57,7 +60,7 @@ export const actions = {
     });
 
     if (res.status === 201) {
-      commit("setUser", null);
+      commit("setUser", getUserFromCookie());
     }
   },
 
