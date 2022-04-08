@@ -1,14 +1,16 @@
 <template>
-    <v-layout @load="displayFunds()">
-        <div width="30em">
-            <h1>View Funds</h1>
-            <div class="fund-container">
-                <v-container v-for="fund in fundList" :key="fund.fundId">
-                    <fund-card :fund="fund" @joinFund="addMember(fund.fundId, user)" />
-                </v-container>
+    <div v-if="user !== null">
+        <v-layout @load="displayFunds()">
+            <div width="30em">
+                <h1>View Funds</h1>
+                <div class="fund-container">
+                    <v-container v-for="fund in fundList" :key="fund.fundId">
+                        <fund-card :fund="fund" @joinFund="addMember(fund.fundId, user)" />
+                    </v-container>
+                </div>
             </div>
-        </div>
-    </v-layout>
+        </v-layout>
+    </div>
 </template>
 
 <script>

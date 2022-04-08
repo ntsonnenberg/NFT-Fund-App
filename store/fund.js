@@ -49,15 +49,23 @@ export const mutations = {
       }
     });
   },
+
+  removeMemberFromFund(state, { fundId, username }) {
+    state.fundList.forEach((fund) => {
+      if (fund.fundId === fundId) {
+        for (let rep = 0; rep < fund.memberNames.length; rep++) {
+          if (fund.memberNames[rep] === username) {
+            fund.memberNames.splice(rep, 1);
+          }
+        }
+      }
+    });
+  },
 };
 
 export const actions = {
   async fundListInit({ commit, state }) {
-    console.log("inside fundListInit");
-
     const res = await this.$axios.get("api/funds");
-
-    console.log(res);
 
     if (res.status === 200) {
       res.data.forEach((fund) => {
@@ -103,6 +111,18 @@ export const actions = {
 
     if (res.status === 200) {
       commit("addMemberToFund", { fundId, username });
+    }
+  },
+
+  async removeMember({ commit, state }, { fundId, username }) {
+    console.log("inside removeMember action", fundId, username);
+
+    const res = await this.$axios.put(
+      `api/funds/${fundId}/accounts/${username}`
+    );
+
+    if (res.status === 200) {
+      commit("removeMemberFromFund", { fundId, username });
     }
   },
 

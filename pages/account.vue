@@ -5,7 +5,7 @@
             <div class="py-10 pl-10">
                 <div>
                     <v-btn color="success" @click="hidden = !hidden">Change Username</v-btn>
-                    <div v-show="!hidden">
+                    <div v-show="!hidden" class="user-update-field">
                         <v-text-field value="username" v-model="username" placeholder="username"></v-text-field>
                     </div>
                 </div>
@@ -26,10 +26,8 @@
             </div>
             <div>
                 <h1>My Investments</h1>
-                <div>
-                    <p>{{ fundListForMember }}</p>
-                    <p>{{ user }}</p>
-                    <!-- <v-simple-table>
+                <div class="pt-10" v-if="fundListForMember.length > 0">
+                    <v-simple-table>
                         <thead>
                             <tr>
                                 <th>Fund Title</th>
@@ -40,15 +38,24 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="fund in fundListForMember" :key="fund.fundId">
-                                <td>{{ fund.title }}</td>
-                                <td>{{ fund.capital.ETH }}</td>
-                                <td>{{ fund.capital.SOL }}</td>
-                                <td>{{ fund.capital.AVAX }}</td>
-                                <td>{{ fund.capital.XRP }}</td>
+                            <tr v-for="fund in fundListForMember" :key="fund.fundId" @click="removeBtnHidden = !removeBtnHidden; chosenFundId = fund.fundId">
+                                <td class="fund-title">{{ fund.title }}</td>
+                                <td class="eth">{{ fund.capital.ETH }}</td>
+                                <td class="sol">{{ fund.capital.SOL }}</td>
+                                <td class="avax">{{ fund.capital.AVAX }}</td>
+                                <td class="xrp">{{ fund.capital.XRP }}</td>
                             </tr>
                         </tbody>
-                    </v-simple-table> -->
+                    </v-simple-table>
+                    <div class="pt-10">
+                        <v-fab-transition>
+                            <v-btn color="red" v-show="!removeBtnHidden" @click="removeMember(chosenFundId); removeBtnHidden = true;">Leave Fund</v-btn>
+                        </v-fab-transition>
+                    </div>
+                </div>
+                <div v-if="fundListForMember.length === 0" class="pl-5 pt-5">
+                    <p>You have not invested in any funds.</p>
+                    <p><NuxtLink to="/funds">Click Here to Join a Fund!</NuxtLink></p>
                 </div>
             </div>
         </div>
@@ -95,7 +102,7 @@ export default {
 
     data () {
         return {
-            hidden: false,
+            hidden: true,
             username: '',
             title: '',
             description: '',
@@ -103,7 +110,9 @@ export default {
             avax: 0,
             sol: 0,
             xrp: 0,
-            overlay: false
+            overlay: false,
+            removeBtnHidden: true,
+            chosenFundId: 0
         }
     },
 
@@ -134,7 +143,7 @@ export default {
             alert("User deleted successfully!")
 
             if (this.user === null) {
-                this.$router.push("/account");
+                this.$router.push("/");
             }
         },
 
@@ -166,6 +175,13 @@ export default {
             await this.$store.dispatch('fund/deleteFund', fundId);
 
             alert("Fund deleted successfully!")
+        },
+
+        async removeMember (fundId) {
+            await this.$store.dispatch('fund/removeMember', {
+                fundId: fundId, 
+                username: this.user
+            });
         }
     },
 
@@ -186,15 +202,13 @@ export default {
 
         fundListForMember () {
             return this.$store.state.fund.fundList.filter((fund) => {
-                fund.memberNames.forEach(member => {
-                    if (member === this.user) {
-                        return true;
-                    }
-                })
-
-                return false;
-            })
-        }
+                if (fund.memberNames.includes(this.user)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        },
     }
 }
 </script>
@@ -240,5 +254,21 @@ export default {
             height: 40em;
             overflow-y: auto
         }
+    }
+
+    td.eth,
+    td.sol,
+    td.avax,
+    td.xrp {
+        text-align: center;
+    }
+
+    a {
+      text-decoration: none;
+      color: white !important;
+    }
+
+    div.user-update-field {
+        width: 15em;
     }
 </style>
