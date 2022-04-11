@@ -1,4 +1,5 @@
 <template>
+<v-container>
     <v-layout>
         <div>
             <h1>Hello {{ user }}!</h1>
@@ -92,6 +93,7 @@
             </v-overlay>
         </div>
     </v-layout>
+</v-container>
 </template>
 
 <script>
